@@ -1,12 +1,16 @@
+"use client" ;
+
 import AcmeLogo from '@/app/ui/acme-logo';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import { roboto_mono } from './ui/fonts'
 import styles from '@/app/ui/home.module.css';
 import Link from 'next/link';
 import HeroImag from '@/app/ui/hero-imag';
+import { useAuth } from '@/handlers/useAuth';
 
 
 export default function Page() {
+  const auth = useAuth();
   return (
     <main className="flex min-h-screen flex-col p-6">
       {/* <div
@@ -26,12 +30,21 @@ export default function Page() {
             </a>
             , brought to you by Vercel.
           </p>
-          <Link
-            href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-          >
-            <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
-          </Link>
+          <header>
+            <nav>
+              {auth ? (
+                <p>logged in</p>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
+                >
+                  <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
+                </Link>
+              )}
+            </nav>
+          </header>
+
 
           <h1 className="w-5 md:w-6">I'm blue!</h1>
         </div>
