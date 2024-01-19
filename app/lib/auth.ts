@@ -7,9 +7,9 @@ export function getJwtSecretKey() {
   return new TextEncoder().encode(secret);
 }
 
-export async function verifyJwtToken(token:string) {
+export async function verifyJwtToken(token: string) {
   try {
-    const { payload } = await jwtVerify(token, getJwtSecretKey());    
+    const { payload } = await jwtVerify(token, getJwtSecretKey());
     return payload;
   } catch (error) {
     console.log(error)
