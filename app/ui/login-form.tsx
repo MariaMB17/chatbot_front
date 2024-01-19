@@ -36,7 +36,12 @@ export default function LoginForm() {
         router.push("/dashboard");
         router.refresh();
       } else {
-        alert(data.data.msg)
+        const mensaje = data.data.msg
+        alert(mensaje)
+        if(mensaje === 'No existe usuario registrado en nuestra bd con ese email') {
+          router.push("/userRegister")
+          router.refresh();
+        }
         toast('Toast is good', {
           hideProgressBar: true,
           autoClose: 2000,

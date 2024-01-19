@@ -4,5 +4,6 @@ import { User } from "./user-model";
 
 export interface UserProfile {
     user: User,
-    profile: Profile
+    profile: Profile,
+    name: string
 }
