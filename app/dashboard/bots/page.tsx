@@ -1,7 +1,7 @@
 export default function page() {
     return (
         <div>
-            <p>Invoices Page</p>
+            <p>Bots Page</p>
         </div>
     )
 }
