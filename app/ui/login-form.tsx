@@ -1,19 +1,19 @@
 "use client";
 
 import { lusitana } from '@/app/ui/fonts';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   AtSymbolIcon,
   KeyIcon,
 } from '@heroicons/react/24/outline';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from './button';
-import { useState } from 'react';
+import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { axiosAction } from '../lib/api-service';
 import { ResponseModel } from '../lib/model/reponse-model';
-import { setCookie } from 'cookies-next';
-import {toast} from 'react-toastify';
 import { User } from '../lib/model/user-model';
+import { Button } from './button';
 
 export default function LoginForm() {
   const [errors, setErrors] = useState<string[]>([]);
@@ -29,6 +29,7 @@ export default function LoginForm() {
     }
     try {
       const user: ResponseModel = await axiosAction.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signin`, dataUser)
+
       const { data, message, statusCode } = user ?? {}
       if (data.data?.access_token) {
         setCookie("token", data.data?.access_token, { maxAge: 60 * 6 * 24 });
