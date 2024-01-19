@@ -1,5 +1,6 @@
 'use client';
 import {
+  ChartBarIcon,
   Cog6ToothIcon,
   CubeIcon,
   DocumentDuplicateIcon,
@@ -19,17 +20,6 @@ const links = [
     icon: HomeIcon
   },
 
-  // -- Esto lo manejamos en Account
-  // {
-  //   name: 'Invoices',
-  //   href: '/dashboard/invoices',
-  //   icon: DocumentDuplicateIcon,
-  // },
-  // {
-  //   name: 'Customers',
-  //   href: '/dashboard/customers',
-  //   icon: UserGroupIcon
-  // },
   {
     name: 'Knowledge',
     href: '/dashboard/knowledge',
@@ -44,6 +34,11 @@ const links = [
     name: 'Chat',
     href: '/dashboard/chats',
     icon: UserGroupIcon
+  },
+  {
+    name: 'Logs',
+    href: '/dashboard/logs',
+    icon: ChartBarIcon
   },
   {
     name: 'Account',
