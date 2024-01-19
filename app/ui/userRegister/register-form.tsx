@@ -22,6 +22,7 @@ const RegisterForm = () => {
     const router = useRouter();
     const registerBtn = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        //const data = await createUserProfile
         const user: User = {
             email,
             password
@@ -40,9 +41,15 @@ const RegisterForm = () => {
         }
         const response: ResponseModel = await createUserProfile(dataUserProfile)
         if(response.data?.msg) {
-            alert(response.data?.msg)
+            const error = response.data.error?.meta?.target 
+            if(error === 'users_email_key') {
+                alert('El correo ya existe')
+            } else {
+                alert(response.data?.msg)                
+            }                        
         } else {
             alert(response.message)
+            router.push('/login')
         }
     }
     return (
