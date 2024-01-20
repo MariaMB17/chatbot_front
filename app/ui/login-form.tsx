@@ -8,18 +8,33 @@ import {
 } from '@heroicons/react/24/outline';
 import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { axiosAction } from '../lib/api-service';
 import { ResponseModel } from '../lib/model/reponse-model';
 import { User } from '../lib/model/user-model';
 import { Button } from './button';
+import { sessionContext } from '@/context/contexts';
 
 export default function LoginForm() {
+  //@ts-ignore
+  const { session, setSession } = useContext(sessionContext);
   const [errors, setErrors] = useState<string[]>([]);
-  const [email, setEmail] = useState<string>("test@test.com");
-  const [password, setPassword] = useState<string>("123123");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const router = useRouter();
+
+  useEffect(() => {
+    const { user } = session ?? {}
+    console.log(!!session)
+    //||
+    if(JSON.stringify(session) !== '{}' && !!session) {
+      setEmail(user.email)
+    } else {
+      setEmail("")            
+    }
+    setPassword("")
+  },[]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,11 +43,11 @@ export default function LoginForm() {
       password
     }
     try {
-      const user: ResponseModel = await axiosAction.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signin`, dataUser)
-
+      const user: ResponseModel = await axiosAction.post(`auth/signin`, dataUser)
       const { data, message, statusCode } = user ?? {}
       if (data.data?.access_token) {
         setCookie("token", data.data?.access_token, { maxAge: 60 * 6 * 24 });
+        perfilUser(data.data?.id)
         router.push("/dashboard");
         router.refresh();
       } else {
@@ -51,6 +66,23 @@ export default function LoginForm() {
       }
     } catch (error) {
       toast.error('Error al iniciar sesion')
+    }
+  }
+
+  const perfilUser = async (userId: number) => {
+    try {
+      const perfilUser = await axiosAction.get(`users/${userId}`)
+      const {Profile, Member, ...user } = perfilUser.data.data ?? null
+      
+      const dataPerfilUser = {
+        user,
+        Profile,
+        company: Member.company,
+        Member       
+      }
+      setSession(dataPerfilUser)
+    } catch (error) {
+      setSession({})      
     }
   }
 

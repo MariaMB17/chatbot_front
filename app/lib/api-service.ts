@@ -4,7 +4,7 @@ import { getCookie } from "cookies-next";
 import { ResponseModel } from './model/reponse-model';
 
 export const axiosAction = {
-    get: (url: string) => Promise<void>,
+    get,
     post,
     /*put,
     delete: _delete*/
@@ -20,12 +20,12 @@ const authHeader = (url:string) => {
     }
 }
 
-const  get = (url:string) => {
+function  get(url:string){
     const requestOptions = {
         method: 'GET',
-        headers: authHeader(url)
+        headers: { 'Content-Type': 'application/json', ...authHeader(url) },
     };
-    return axios(url, requestOptions).then(handleResponse);
+    return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, requestOptions);
 
 }
 
@@ -35,7 +35,8 @@ function post(url:string, body: any):Promise<ResponseModel>{
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
         data: JSON.stringify(body)
     };
-    return axios(url, requestOptions);
+    console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`)
+    return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, requestOptions);
 }
 
 const handleResponse = (response: any) => {

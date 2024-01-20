@@ -6,7 +6,7 @@ const URL_API = 'users'
 
 export const createUserProfile = async (data: UserProfile) => {
     try {
-        const userProfile: ResponseModel = await axiosAction.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${URL_API}`, data)
+        const userProfile: ResponseModel = await axiosAction.post(`${URL_API}`, data)
         return response(userProfile)
     } catch (error) {
         return error;
