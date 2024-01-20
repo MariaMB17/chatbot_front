@@ -1,15 +1,14 @@
-import { Inter, Roboto_Mono, Lusitana } from 'next/font/google';
- 
-export const inter = Inter({ 
-    subsets: ['latin'] 
+import { Inter, Lusitana, Montserrat } from 'next/font/google';
+
+export const inter = Inter({
+    subsets: ['latin']
 });
 
-export const roboto_mono = Roboto_Mono({
-    subsets: ['latin'],
-    display: 'swap',
+export const montserrat = Montserrat({
+    subsets: ['latin']
 })
 
-export const lusitana = Roboto_Mono({
+export const lusitana = Lusitana({
+    weight: ['400', '700'],
     subsets: ['latin'],
-    display: 'swap',
-})
+});
