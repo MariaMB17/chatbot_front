@@ -46,18 +46,18 @@ const SectionCompany = () => {
     const items: TabsProps['items'] = [
         {
             key: '1',
-            label: 'Resgitro',
+            label: 'REGISTRO',
             children: [<div className="space-y-1"> <CompanyForm /> </div>],
         },
         {
             key: '2',
-            label: 'Plan',
+            label: 'PLAN',
             children: [<PlanForm />],
         },
         {
             key: '3',
-            label: 'Facturas',
-            children: [<form key={2}><h1>registo 78</h1></form>],
+            label: 'FACTURAS',
+            children: [<form key={2}><h1>Listar Facturas</h1></form>],
         },
     ];
     return (

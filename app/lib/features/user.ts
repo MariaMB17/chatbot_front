@@ -30,7 +30,14 @@ const dataUser: UserProfile =
     },
     member: {
         id: 0,
+        userId: 0,
+        companyId: 0,
         planId: 0,
+        memberOnKnowledge: [],
+        memberOnBot: [],
+        memberLog: [],
+        chat:[],
+        role: ''
     },
     plan: {
         id: 0,

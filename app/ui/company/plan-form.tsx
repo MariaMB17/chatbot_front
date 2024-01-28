@@ -1,15 +1,46 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge, Button, Card, Flex, Space } from 'antd';
 import { AndroidOutlined, DollarOutlined, FileTextOutlined, SketchOutlined } from '@ant-design/icons';
 import { useAppSelector } from "@/app/lib/hooks";
 import { useEffect } from "react";
+import ListComponent from '../components/list-component';
+import { Member } from '@/app/lib/model/member-model';
+import { ItemList } from '@/app/lib/interface/item-list';
 
 const PlanForm: React.FC = () => {
+    const data = [
+        {
+            title: 'Ant Design Title 17',
+        },
+        {
+            title: 'Ant Design Title 27',
+        },
+        {
+            title: 'Ant Design Title 37',
+        },
+        {
+            title: 'Ant Design Title 47',
+        },
+    ];
+
+    const items: ItemList[] = []
+
+    const [dataList, setDataList] = useState<ItemList[]>(items);
     const { dataUser } = useAppSelector((state) => state.user);
 
+
     useEffect(() => {
-        console.log(dataUser)
+        const { plan, ...dataUserProfile } = dataUser
+        const data = plan?.member || []
+        const d: ItemList[] = data.map((item) => {
+            return {
+                title: `${item.user?.Profile?.lastname || ''} ${item.user?.Profile?.lastname || ''} { ${item.user?.email || ''} }`,
+                description: item.user?.Profile?.address || ''
+            }
+
+        })
+        setDataList([...d])
     }, [dataUser]);
     return (
         <>
@@ -17,7 +48,7 @@ const PlanForm: React.FC = () => {
                 <Badge.Ribbon text={dataUser.plan?.name} color="red">
                     <Card title={dataUser.plan?.name} size="small" style={{ fontWeight: 'bold' }}>
                         <p> {dataUser.plan?.description} </p>
-                        <Flex gap="small" align="flex-start" vertical style={{ padding: '10px 0px'}}>
+                        <Flex gap="small" align="flex-start" vertical style={{ padding: '10px 0px' }}>
                             <Flex gap="small" wrap="wrap">
                                 <Button type="primary" shape="round" icon={<FileTextOutlined />} style={{ background: '#0c1070' }}>
                                     Documentos: {dataUser.plan?.documents}
@@ -31,9 +62,14 @@ const PlanForm: React.FC = () => {
 
                                 <Button type="primary" shape="round" icon={<DollarOutlined />} style={{ background: '#23834b' }}>
                                     Costo: {dataUser.plan?.cost}
-                                </Button>                                
+                                </Button>
                             </Flex>
                         </Flex>
+                    </Card>
+                    <Card title="MIEMBROS" size="small" style={{ fontWeight: 'bold', padding: '10px 0px' }}>
+
+                        {<ListComponent dataItems={dataList} />}
+
                     </Card>
                 </Badge.Ribbon>
             </Space>

@@ -4,11 +4,8 @@ import { ArrowRightIcon, CheckBadgeIcon, PhoneIcon } from "@heroicons/react/24/o
 import { ChangeEvent, useEffect, useState } from "react";
 import { Button } from "../button";
 import { useAppSelector, useAppDispatch } from "@/app/lib/hooks";
-import { fetchUserData, getUserProfile, setUserProfile } from "@/app/lib/features/user";
-import { UserProfile } from "@/app/lib/model/user-profile-model";
+import { setUserProfile } from "@/app/lib/features/user";
 import { updateCompnay } from "@/app/lib/services/company.service";
-import { getPlanById } from "@/app/lib/services/plan.service";
-import { ResponseModel } from "@/app/lib/model/reponse-model";
 
 
 const CompanyForm = () => {
@@ -27,7 +24,6 @@ const CompanyForm = () => {
     const { dataUser } = useAppSelector((state) => state.user);
 
     useEffect(() => {
-        console.log(dataUser)
         const {company, ...userProfile} = dataUser ?? null
         setCompany({ ...dataCompany, name: '' })
         setCompany({

@@ -16,9 +16,10 @@ import { Button } from './button';
 import { sessionContext } from '@/context/contexts';
 import { useAppDispatch, useAppSelector } from '../lib/hooks';
 import { getToken, setToken } from '../lib/features/auth';
-import { setUserProfile  } from '../lib/features/user';
+import { setUserProfile } from '../lib/features/user';
 import { UserProfile } from '../lib/model/user-profile-model';
 import { getPlanById } from '../lib/services/plan.service';
+import Link from 'next/link';
 
 export default function LoginForm() {
   //@ts-ignore
@@ -31,7 +32,7 @@ export default function LoginForm() {
 
   const dispatch = useAppDispatch();
   const { userEmail } = useAppSelector((state) => state.auth);
-   
+
 
   useEffect(() => {
     dispatch(getToken())
@@ -48,8 +49,8 @@ export default function LoginForm() {
     try {
       const user: ResponseModel = await axiosAction.post(`auth/signin`, dataUsuario)
       const { data, message, statusCode } = user ?? {}
-      if (data.data?.access_token) {        
-        dispatch(setToken({token: data.data?.access_token, email: data.data?.email}))
+      if (data.data?.access_token) {
+        dispatch(setToken({ token: data.data?.access_token, email: data.data?.email }))
         perfilUser(data.data?.id)
         router.push("/dashboard");
         router.refresh();
@@ -57,8 +58,8 @@ export default function LoginForm() {
         const mensaje = data.data.msg
         alert(mensaje)
         if (mensaje === 'No existe usuario registrado en nuestra bd con ese email') {
-          router.push("/userRegister")
-          router.refresh();
+          //router.push("/userRegister")
+          //router.refresh();
         }
         toast('Toast is good', {
           hideProgressBar: true,
@@ -82,7 +83,7 @@ export default function LoginForm() {
         name: '',
         profile: Profile,
         company: Member.company,
-        member:Member
+        member: Member
       }
       dataPlan(Member.planId, dataPerfilUser)
     } catch (error) {
@@ -93,17 +94,16 @@ export default function LoginForm() {
   const dataPlan = async (id: number, data?: UserProfile) => {
     const dataPlan: ResponseModel = await getPlanById(id)
     if (dataPlan) {
-        const plan = dataPlan.data
-        const dataU = {
-            ...data,
-            plan
-        }
-        console.log(data)
-        dispatch(setUserProfile(dataU))
+      const plan = dataPlan.data
+      const dataU = {
+        ...data,
+        plan
+      }
+      dispatch(setUserProfile(dataU))
     } else {
       dispatch(setUserProfile(data))
-    }    
-}
+    }
+  }
 
   return (
     <form className="space-y-3" onSubmit={handleSubmit}>
@@ -156,7 +156,13 @@ export default function LoginForm() {
             </div>
           </div>
         </div>
-        <LoginButton />
+        <LoginButton />        
+        <Link
+          href="/userRegister"
+          className="flex gap-5 items-center self-start rounded-lg px-6 py-3 text-sm font-medium text-blue transition-colors md:text-base"
+        >
+          <span style={{ fontSize: '13px', fontWeight: '400', color: 'blue', width: '100%', textAlign: 'end' }}>Registrarse</span>
+        </Link>
         <div className="flex h-8 items-end space-x-1">
           {/* Add form errors here */}
         </div>
