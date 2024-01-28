@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { ItemMenu, ItemMenuConfig } from '@/app/lib/data-menu';
 import { useState } from 'react';
 import { Cog6ToothIcon, HomeIcon, LinkIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
 
 export default function NavLinks() {
   const [links, setLinks] = useState(ItemMenu);
@@ -13,13 +14,16 @@ export default function NavLinks() {
 
   let IconConfig = Cog6ToothIcon
   const IconHome = HomeIcon
+  const router = useRouter();
   const changeItemMenu = () => {
     const newLinks = ItemMenuConfig;
     setBtnHome(!btnHome)
     if (btnHome) {
       setLinks(ItemMenu);
-    } else {
+      router.push("/dashboard");
+    } else {      
       setLinks(newLinks);
+      router.push("dashboard/company")
     }
   }
 

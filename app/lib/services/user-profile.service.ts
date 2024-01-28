@@ -13,6 +13,15 @@ export const createUserProfile = async (data: UserProfile) => {
     }
 }
 
+export const getUserByEmail = async(email: string)=>{
+    try {
+        const userProfile: any = await axiosAction.get(`${URL_API}/email/${email}`)
+        return response(userProfile)        
+    } catch (error) {
+        return error;        
+    }
+}
+
 const response = (dataResponse: ResponseModel) => {
     const { data, message, statusCode } = dataResponse ?? {}
     return data

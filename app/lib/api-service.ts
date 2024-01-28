@@ -6,8 +6,8 @@ import { ResponseModel } from './model/reponse-model';
 export const axiosAction = {
     get,
     post,
-    /*put,
-    delete: _delete*/
+    patch,
+    /*delete: _delete*/
 };
 
 const authHeader = (url:string) => {
@@ -20,11 +20,12 @@ const authHeader = (url:string) => {
     }
 }
 
-function  get(url:string){
+function  get(url:string):Promise<ResponseModel>{
     const requestOptions = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
     };
+    console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`)
     return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, requestOptions);
 
 }
@@ -35,9 +36,17 @@ function post(url:string, body: any):Promise<ResponseModel>{
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
         data: JSON.stringify(body)
     };
-    console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`)
     return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, requestOptions);
 }
+
+function patch(url: string, id: string, body: any): Promise<ResponseModel> {
+    const requestOptions = {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...authHeader(url) },
+      data: JSON.stringify(body)
+    };
+    return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}/${id}`, requestOptions);
+  }
 
 const handleResponse = (response: any) => {
     console.log(response)

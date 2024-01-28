@@ -6,7 +6,6 @@ import {
   AtSymbolIcon,
   KeyIcon,
 } from '@heroicons/react/24/outline';
-import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -15,45 +14,49 @@ import { ResponseModel } from '../lib/model/reponse-model';
 import { User } from '../lib/model/user-model';
 import { Button } from './button';
 import { sessionContext } from '@/context/contexts';
+import { useAppDispatch, useAppSelector } from '../lib/hooks';
+import { getToken, setToken } from '../lib/features/auth';
+import { setUserProfile  } from '../lib/features/user';
+import { UserProfile } from '../lib/model/user-profile-model';
+import { getPlanById } from '../lib/services/plan.service';
 
 export default function LoginForm() {
   //@ts-ignore
   const { session, setSession } = useContext(sessionContext);
+  const { dataUser } = useAppSelector((state) => state.user);
   const [errors, setErrors] = useState<string[]>([]);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
 
+  const dispatch = useAppDispatch();
+  const { userEmail } = useAppSelector((state) => state.auth);
+   
+
   useEffect(() => {
-    const { user } = session ?? {}
-    console.log(!!session)
-    //||
-    if(JSON.stringify(session) !== '{}' && !!session) {
-      setEmail(user.email)
-    } else {
-      setEmail("")            
-    }
+    dispatch(getToken())
+    setEmail(userEmail)
     setPassword("")
-  },[]);
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const dataUser: User = {
+    const dataUsuario: User = {
       email,
       password
     }
     try {
-      const user: ResponseModel = await axiosAction.post(`auth/signin`, dataUser)
+      const user: ResponseModel = await axiosAction.post(`auth/signin`, dataUsuario)
       const { data, message, statusCode } = user ?? {}
-      if (data.data?.access_token) {
-        setCookie("token", data.data?.access_token, { maxAge: 60 * 6 * 24 });
+      if (data.data?.access_token) {        
+        dispatch(setToken({token: data.data?.access_token, email: data.data?.email}))
         perfilUser(data.data?.id)
         router.push("/dashboard");
         router.refresh();
       } else {
         const mensaje = data.data.msg
         alert(mensaje)
-        if(mensaje === 'No existe usuario registrado en nuestra bd con ese email') {
+        if (mensaje === 'No existe usuario registrado en nuestra bd con ese email') {
           router.push("/userRegister")
           router.refresh();
         }
@@ -72,19 +75,35 @@ export default function LoginForm() {
   const perfilUser = async (userId: number) => {
     try {
       const perfilUser = await axiosAction.get(`users/${userId}`)
-      const {Profile, Member, ...user } = perfilUser.data.data ?? null
-      
-      const dataPerfilUser = {
+      const { Profile, Member, ...user } = perfilUser.data.data ?? null
+
+      const dataPerfilUser: UserProfile = {
         user,
-        Profile,
+        name: '',
+        profile: Profile,
         company: Member.company,
-        Member       
+        member:Member
       }
-      setSession(dataPerfilUser)
+      dataPlan(Member.planId, dataPerfilUser)
     } catch (error) {
-      setSession({})      
+      setSession({})
     }
   }
+
+  const dataPlan = async (id: number, data?: UserProfile) => {
+    const dataPlan: ResponseModel = await getPlanById(id)
+    if (dataPlan) {
+        const plan = dataPlan.data
+        const dataU = {
+            ...data,
+            plan
+        }
+        console.log(data)
+        dispatch(setUserProfile(dataU))
+    } else {
+      dispatch(setUserProfile(data))
+    }    
+}
 
   return (
     <form className="space-y-3" onSubmit={handleSubmit}>
@@ -145,9 +164,7 @@ export default function LoginForm() {
     </form>
   );
 }
-
 function LoginButton() {
-
   return (
     <Button className="mt-4 w-full" type="submit">
       Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
