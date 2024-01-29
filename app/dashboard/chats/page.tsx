@@ -1,6 +1,6 @@
 import ChatNew from "@/app/ui/chats/chat-new";
 
-export const getData = async () => {
+export const getData: any = async () => {
     const response = await fetch('http://localhost:3001/knowledge/textContext/1', {
         cache: 'no-store'
     });

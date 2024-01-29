@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
-import { Badge, Button, Card, Flex, Space } from 'antd';
-import { AndroidOutlined, DollarOutlined, FileTextOutlined, SketchOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Flex, FloatButton, Space, Tooltip } from 'antd';
+import { AndroidOutlined, DollarOutlined, EditOutlined, FileTextOutlined, SketchOutlined } from '@ant-design/icons';
 import { useAppSelector } from "@/app/lib/hooks";
 import { useEffect } from "react";
 import ListComponent from '../components/list-component';
@@ -9,21 +9,6 @@ import { Member } from '@/app/lib/model/member-model';
 import { ItemList } from '@/app/lib/interface/item-list';
 
 const PlanForm: React.FC = () => {
-    const data = [
-        {
-            title: 'Ant Design Title 17',
-        },
-        {
-            title: 'Ant Design Title 27',
-        },
-        {
-            title: 'Ant Design Title 37',
-        },
-        {
-            title: 'Ant Design Title 47',
-        },
-    ];
-
     const items: ItemList[] = []
 
     const [dataList, setDataList] = useState<ItemList[]>(items);
@@ -64,6 +49,11 @@ const PlanForm: React.FC = () => {
                                     Costo: {dataUser.plan?.cost}
                                 </Button>
                             </Flex>
+                        </Flex>
+                        <Flex wrap="wrap" gap="small" align="flex-end" style={{ float: 'inline-end' }}>
+                            <Tooltip title="MODIFICAR PLAN">
+                                <Button shape="circle" icon={<EditOutlined />} />
+                            </Tooltip>
                         </Flex>
                     </Card>
                     <Card title="MIEMBROS" size="small" style={{ fontWeight: 'bold', padding: '10px 0px' }}>
