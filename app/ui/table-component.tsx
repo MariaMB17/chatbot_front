@@ -1,10 +1,6 @@
 import { Table } from "antd";
 import { ColumnType } from "antd/es/table";
-
-interface AppTableProps{
-    columns: ColumnType<any>[];
-    data: any[];
-}
+import { AppTableProps } from "../lib/model/column-table-model";
 
 const AppTable: React.FC<AppTableProps> = ({ columns, data }) => (
     <Table columns={columns} dataSource={data} />

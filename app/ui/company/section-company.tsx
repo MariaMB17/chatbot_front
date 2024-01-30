@@ -47,17 +47,17 @@ const SectionCompany = () => {
         {
             key: '1',
             label: 'REGISTRO',
-            children: [<div className="space-y-1"> <CompanyForm /> </div>],
+            children: [<div key={1} className="space-y-1"> <CompanyForm /> </div>],
         },
         {
             key: '2',
             label: 'PLAN',
-            children: [<PlanForm />],
+            children: [<div key={2} className="space-y-1"> <PlanForm /> </div>],
         },
         {
             key: '3',
             label: 'FACTURAS',
-            children: [<form key={2}><h1>Listar Facturas</h1></form>],
+            children: [<form key={3}><h1>Listar Facturas</h1></form>],
         },
     ];
     return (
