@@ -6,11 +6,19 @@ const URL_API = 'users'
 
 export const createUserProfile = async (data: UserProfile) => {
     try {
-        const userProfile: ResponseModel = await axiosAction.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${URL_API}`, data)
+        const userProfile: ResponseModel = await axiosAction.post(`${URL_API}`, data)
         return response(userProfile)
     } catch (error) {
-        alert('No se pudo registrar el usuario')
-        return 'No se pudo registrar el usuario'
+        return error;
+    }
+}
+
+export const getUserByEmail = async(email: string)=>{
+    try {
+        const userProfile: any = await axiosAction.get(`${URL_API}/email/${email}`)
+        return response(userProfile)        
+    } catch (error) {
+        return error;        
     }
 }
 

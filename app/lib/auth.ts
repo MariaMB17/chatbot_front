@@ -1,4 +1,5 @@
 import { jwtVerify } from "jose";
+
 export function getJwtSecretKey() {
   const secret = process.env.NEXT_PUBLIC_JWT_SECRET_KEY;
   if (!secret) {

@@ -24,8 +24,11 @@ export async function middleware(request: any) {
   if (!hasVerifiedToken) {
     const searchParams = new URLSearchParams(nextUrl.searchParams);
     searchParams.set("next", nextUrl.pathname);
-    const response = NextResponse.redirect(
+   /* const response = NextResponse.redirect(
       new URL(`/login?${searchParams}`, url)
+    );*/
+    const response = NextResponse.redirect(
+      new URL(`/login`, nextUrl)
     );
     response.cookies.delete("token");
     return response;
