@@ -1,0 +1,13 @@
+Eliminar node_modules y package-lock.json:
+    rm -rf node_modules package-lock.json
+    npm install
+
+Usar la opción --legacy-peer-deps: Esta opción hace que npm ignore las dependencias entre pares y continúe con la instalación.
+    npm install --legacy-peer-deps
+
+Usar la opción --force: Esta opción fuerza a npm a instalar las dependencias incluso si hay conflictos.
+    npm install --force
+
+Limpiar la caché de npm:
+    npm cache clean --force
+    
