@@ -30,9 +30,9 @@ export default function RootLayout({
             {children}
           </SessionProvider>
         </StoreProvider>
-        <footer className='py-5 flex justify-center items-center'>
+        {/* <footer className='py-5 flex justify-center items-center'>
           Derechos Reservados
-        </footer>
+        </footer> */}
       </body>
     </html>
   );
