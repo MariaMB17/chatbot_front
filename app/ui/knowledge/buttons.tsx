@@ -1,5 +1,9 @@
-import { deleteInvoice } from '@/app/lib/actions';
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { deleteKnowledge, deleteKnowledgeBase } from '@/app/lib/actions-knowledge';
+import {
+  PencilIcon,
+  PlusIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 export function CreateKnowledge() {
@@ -14,7 +18,7 @@ export function CreateKnowledge() {
   );
 }
 
-export function UpdateKnowlede({ id }: { id: string }) {
+export function UpdateKnowledge({ id }: { id: number }) {
   return (
     <Link
       href={`/dashboard/knowledge/${id}/edit`}
@@ -25,11 +29,37 @@ export function UpdateKnowlede({ id }: { id: string }) {
   );
 }
 
-export function DeleteKnoledge({ id }: { id: string }) {
-  const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+export function DeleteKnowledge({ id }: { id: number }) {
+  const deleteKnowledgeWithId = deleteKnowledge.bind(null, id);
 
   return (
-    <form action={deleteInvoiceWithId}>
+    <form action={deleteKnowledgeWithId}>
+      <button className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">Delete</span>
+        <TrashIcon className="w-5" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteKnowledgeBase({ id }: { id: number }) {
+  const deleteKnowledgeWithId = deleteKnowledgeBase.bind(null, id);
+
+  return (
+    <form action={deleteKnowledgeWithId}>
+      <button className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">Delete</span>
+        <TrashIcon className="w-5" />
+      </button>
+    </form>
+  );
+}
+
+export function DownloadKnowledgeBase({ id }: { id: number }) {
+  const deleteKnowledgeWithId = deleteKnowledgeBase.bind(null, id);
+
+  return (
+    <form action={deleteKnowledgeWithId}>
       <button className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />
