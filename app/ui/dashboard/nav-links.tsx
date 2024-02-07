@@ -1,11 +1,10 @@
 'use client';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
 import { ItemMenu, ItemMenuConfig } from '@/app/lib/data-menu';
+import { Cog6ToothIcon, HomeIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Cog6ToothIcon, HomeIcon, LinkIcon } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
 
 export default function NavLinks() {
   const [links, setLinks] = useState(ItemMenu);
@@ -21,7 +20,7 @@ export default function NavLinks() {
     if (btnHome) {
       setLinks(ItemMenu);
       router.push("/dashboard");
-    } else {      
+    } else {
       setLinks(newLinks);
       router.push("dashboard/company")
     }

@@ -9,6 +9,5 @@ export default function Layout(
             </div>
             <div className="flex-grow p-6 md:overflow-auto md:p-12"> {children} </div>
         </div >
-
     )
 }
