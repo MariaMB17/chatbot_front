@@ -31,8 +31,8 @@ export default async function KnowledgeTable({
               >
                 <div className="flex items-center justify-between border-b pb-4">
                   <div>
-                    <div className="mb-2 flex items-center">
-                      <p>{knowledge.name}</p>
+                    <div className="mb-2">
+                      <p className="text-sm md:text-base overflow-y-auto" style={{ maxHeight: '3rem' }}>{knowledge.name}</p>
                     </div>
                   </div>
                 </div>
@@ -84,9 +84,9 @@ export default async function KnowledgeTable({
                   key={knowledge.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                  <td className="whitespace-normal py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      <p>{knowledge.name}</p>
+                      <p className="text-sm md:text-base overflow-y-auto" style={{ maxHeight: '3rem' }}>{knowledge.name}</p>
                     </div>
                   </td>
 

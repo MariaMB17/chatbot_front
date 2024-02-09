@@ -86,6 +86,8 @@ export async function updateKnowledge(
     prevState: State,
     formData: FormData) {
 
+    console.log(formData);
+
     const validatedFields = UpdateKnowledge.safeParse({
         name: formData.get('name'),
     });
