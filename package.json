@@ -34,6 +34,7 @@
     "tw-elements": "^1.1.0",
     "typescript": "5.2.2",
     "universal-cookie": "^7.0.1",
+    "use-debounce": "^10.0.0",
     "usellm": "^0.13.0",
     "yup": "^1.3.3",
     "zod": "^3.22.2"

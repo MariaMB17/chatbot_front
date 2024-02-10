@@ -3,22 +3,26 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+
 import {
     createKnowledgeData,
     deleteKnowledgeBaseData,
     deleteKnowledgeData,
-    updateKnowledgeData
+    updateKnowledgeData,
+    uploadKnowledgeFileData
 } from './data-knowledge';
+
 
 // Objeto de Validacion
 const KnowledgeSchema = z.object({
     name: z.string()
         .min(5, { message: "Debe tener 5 o más caracteres" })
+        .max(30, { message: "Debe tener máximo 30 caracteres" })
         .regex(/^[a-zA-Z0-9\s]*$/, { message: 'No se admiten caracteres especiales' }),
 });
 
-const CreateKnowledge = KnowledgeSchema
-const UpdateKnowledge = KnowledgeSchema
+const CreateKnowledge = KnowledgeSchema;
+const UpdateKnowledge = KnowledgeSchema;
 
 export type State = {
     errors?: {
@@ -26,13 +30,6 @@ export type State = {
     };
     message?: string | null;
 };
-
-interface KnowledgeCreateDataProps {
-    knowledge: {
-        name: string;
-    };
-    member_id: number;
-}
 
 export async function createKnowledge(
     member_id: number,
@@ -42,32 +39,22 @@ export async function createKnowledge(
         name: formData.get('name'),
     })
 
-    console.log(member_id);
-
     // Valida datos de entrada...
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            message: 'No se puedo crear el nombre de Knowledge',
+            message: 'Verifique la información Suministrada',
         };
     }
 
     // Extrae los campos del Form...
     const { name } = validatedFields.data;
-
-    const objectData: KnowledgeCreateDataProps = {
-        knowledge: {
-            name,
-        },
-        member_id,
-    };
-
     try {
-        const result = await createKnowledgeData(objectData);
-        console.log('Knowledge create successfully:', result);
+        const result = await createKnowledgeData(member_id, name);
+        console.log('Base de Conocimiento Creada Satisfactoriamente:', result);
     } catch (error) {
         return {
-            message: 'Database Error: Failed to Create Knowledge.',
+            message: 'Error: Creando la Base de Conocimiento',
         }
     };
 
@@ -75,19 +62,12 @@ export async function createKnowledge(
     redirect('/dashboard/knowledge')
 }
 
-interface KnowledgeUpdateDataProps {
-    knowledge: {
-        name: string;
-    };
-}
-
 export async function updateKnowledge(
-    id: number,
+    knowledge_id: number,
+    member_id: number,
     prevState: State,
-    formData: FormData) {
-
-    console.log(formData);
-
+    formData: FormData
+) {
     const validatedFields = UpdateKnowledge.safeParse({
         name: formData.get('name'),
     });
@@ -95,26 +75,32 @@ export async function updateKnowledge(
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            message: 'No se pudo actualizado el nombre de Knowledge',
+            message: 'Verifique la información Suministrada',
         };
     }
 
     const { name } = validatedFields.data;
-
-    const objectData: KnowledgeUpdateDataProps = {
-        knowledge: {
-            name,
-        }
-    };
-
     try {
-        const result = await updateKnowledgeData(id, objectData)
-        console.log('Knowledge updated successfully:', result);
+        const result = await updateKnowledgeData(knowledge_id, name)
+        console.log('Base de Conocimiento actualizada Satisfactoriamente:', result);
     } catch (error) {
         return {
-            message: 'Database Error: Failed to Update Knowledge.',
+            message: 'Error: Fallo la actualización...',
         }
     };
+
+    // Procesamiento de archivos
+    const fileUpload = formData.get('fileUpload');
+    if (fileUpload instanceof File && fileUpload.size > 0) {
+        try {
+            await uploadKnowledgeFileData(member_id, knowledge_id, [fileUpload]);
+            console.log('Archivo Subido');
+        } catch (error) {
+            return {
+                message: 'Error: Fallo subir el archivo...',
+            };
+        }
+    }
 
     revalidatePath('/dashboard/knowledge');
     redirect('/dashboard/knowledge');
@@ -126,7 +112,7 @@ export async function deleteKnowledge(id: number) {
         console.log('Knowledge delete successfully:', result);
     } catch (error) {
         return {
-            message: 'Database Error: Failed to Delete Knowledge.',
+            message: 'Error: Fallo la eliminación del registro...',
         }
     };
 
@@ -137,14 +123,13 @@ export async function deleteKnowledge(id: number) {
 export async function deleteKnowledgeBase(id: number) {
     try {
         const result = await deleteKnowledgeBaseData(id)
-        console.log('Knowledge document delete successfully:', result);
+        console.log('Documento Eliminado Satisfactoriamente:', result);
     } catch (error) {
         return {
-            message: 'Database Error: Failed to Delete Knowledge Document.',
+            message: 'Error: Eliminado el documento...',
         }
     };
 
     revalidatePath('/dashboard/knowledge');
     redirect('/dashboard/knowledge');
 }
-

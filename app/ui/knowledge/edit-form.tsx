@@ -41,8 +41,9 @@ export default function EditKnowledgeForm({
 }: {
   knowledge: KnowledgeProps;
 }) {
+  const member_id = 1;
   const initialState = { message: null, errors: {} };
-  const updateKnoledgeWithId = updateKnowledge.bind(null, knowledge.id);
+  const updateKnoledgeWithId = updateKnowledge.bind(null, knowledge.id, member_id);
   const [state, dispatch] = useFormState(updateKnoledgeWithId, initialState);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -95,7 +96,7 @@ export default function EditKnowledgeForm({
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
           <div className="mb-4">
             <label htmlFor="name" className="mb-2 block text-sm font-medium">
-              Name Knowledge
+              Nombre de la Base de Conocimiento
             </label>
             <div className="relative mt-2 rounded-md">
               <div className="relative">
@@ -104,7 +105,7 @@ export default function EditKnowledgeForm({
                   name="name"
                   type="text"
                   defaultValue={knowledge.name}
-                  placeholder="description"
+                  placeholder="Descripción"
                   aria-describedby="name-error"
                   className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 />
@@ -130,7 +131,7 @@ export default function EditKnowledgeForm({
           {/* File input field */}
           <div className="mb-4">
             <label htmlFor="file" className="mb-2 block text-sm font-medium">
-              Upload File (.pdf or .docx)
+              Subir Documento (.pdf o .docx)
             </label>
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
               onDrop={handleDrop}
@@ -141,7 +142,7 @@ export default function EditKnowledgeForm({
                     htmlFor="fileUpload"
                     className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
                   >
-                    <span>Upload a file</span>
+                    <span>Subir un Documento</span>
                     <input
                       id="fileUpload"
                       name="fileUpload"
@@ -151,9 +152,9 @@ export default function EditKnowledgeForm({
                       onChange={handleFileChange}
                     />
                   </label>
-                  <p className="pl-1">or drag and drop</p>
+                  <p className="pl-1">o puede arrastrar y soltar</p>
                 </div>
-                <p className="text-xs text-gray-500">PDF or DOCX up to 10MB</p>
+                <p className="text-xs text-gray-500">el archivo PDF ó WORD, tamaño máximo de 10MB</p>
               </div>
             </div>
           </div>
@@ -161,12 +162,12 @@ export default function EditKnowledgeForm({
           {/* File details table */}
           {selectedFile && (
             <div className="mb-4">
-              <h3 className="text-lg font-medium mb-2">Selected File Details</h3>
+              <h3 className="text-lg font-medium mb-2">Documento Seleccionado:</h3>
               <table className="min-w-full divide-y divide-gray-200">
                 <tbody className="bg-white divide-y divide-gray-200">
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      Name
+                      Nombre:
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="max-w-full">
@@ -176,15 +177,15 @@ export default function EditKnowledgeForm({
                   </tr>
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      Type
+                      Documento:
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {selectedFile.type === 'application/pdf' ? 'Pdf' : 'Word'}
+                      {selectedFile.type === 'application/pdf' ? 'PDF' : 'WORD'}
                     </td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      Size
+                      Tamaño:
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {renderFileSize(selectedFile.size)}
@@ -201,9 +202,9 @@ export default function EditKnowledgeForm({
             href="/dashboard/knowledge"
             className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
           >
-            Cancel
+            Cancelar
           </Link>
-          <Button type="submit">Edit Knowledge</Button>
+          <Button type="submit">Guardar</Button>
         </div>
       </form>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />

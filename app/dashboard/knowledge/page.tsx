@@ -2,8 +2,9 @@ import { fetchKnowledgePages } from '@/app/lib/data-knowledge';
 import { lusitana } from '@/app/ui/fonts';
 import { CreateKnowledge } from '@/app/ui/knowledge/buttons';
 import Pagination from '@/app/ui/knowledge/pagination';
+import Search from '@/app/ui/knowledge/search';
 import Table from '@/app/ui/knowledge/table';
-import Search from '@/app/ui/search';
+
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Metadata } from 'next';
 import { Suspense } from 'react';

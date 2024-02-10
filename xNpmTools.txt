@@ -11,3 +11,5 @@ Usar la opción --force: Esta opción fuerza a npm a instalar las dependencias i
 Limpiar la caché de npm:
     npm cache clean --force
     
+// Esto es para la el boton buscar de la paginacion
+npm install use-debounce -Enpm install use-debounce

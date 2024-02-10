@@ -3,14 +3,14 @@ import { unstable_noStore as noStore } from 'next/cache';
 
 const ITEMS_PER_PAGE = 6;
 
-interface KnowledgeCreateDataProps {
+interface CreateKnowledgeProps {
     knowledge: {
         name: string;
     };
     member_id: number;
 }
 
-interface KnowledgeUpdateDataProps {
+interface UpdateKnowledgeProps {
     knowledge: {
         name: string;
     };
@@ -74,10 +74,17 @@ export async function fetchKnowledgeById(id: number) {
 }
 
 export async function createKnowledgeData(
-    knowledgeData: KnowledgeCreateDataProps
+    member_id: number,
+    name: string,
 ) {
     noStore();
 
+    const knowledgeData: CreateKnowledgeProps = {
+        knowledge: {
+            name
+        },
+        member_id
+    }
     const url = '/knowledge';
     try {
         const response: AxiosResponse = await axiosInstance.post(url, knowledgeData);
@@ -89,10 +96,15 @@ export async function createKnowledgeData(
 
 export async function updateKnowledgeData(
     id: number,
-    knowledgeData: KnowledgeUpdateDataProps
+    name: string,
 ) {
     noStore();
 
+    const knowledgeData: UpdateKnowledgeProps = {
+        knowledge: {
+            name
+        }
+    }
     const url = `/knowledge/${id}`;
     try {
         const response: AxiosResponse = await axiosInstance.patch(url, knowledgeData);
@@ -126,6 +138,29 @@ export async function deleteKnowledgeBaseData(id: number) {
     }
 }
 
+export async function uploadKnowledgeFileData(
+    member_id: number,
+    knowledge_id: number,
+    files: File[]): Promise<any> {
+    noStore();
+
+    const formData = new FormData();
+    formData.append('member_id', member_id.toString());
+    formData.append('knowledge_id', knowledge_id.toString());
+    files.forEach(file => {
+        formData.append('files', file);
+    });
+
+    try {
+        const url = `knowledge/upload`;
+        const response = await axiosInstance.post(url, formData);
+        return response.data.data;
+    } catch (error) {
+        handleError(error);
+        return 'Fallo Subida de Archivos';
+    }
+}
+
 export async function getDataTextContex(id: number): Promise<string> {
     noStore();
     try {
@@ -137,3 +172,5 @@ export async function getDataTextContex(id: number): Promise<string> {
         return 'Puedes responder cualquier pregunta'
     }
 }
+
+
