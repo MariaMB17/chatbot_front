@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-
 import {
     createKnowledgeData,
     deleteKnowledgeBaseData,
@@ -11,7 +10,6 @@ import {
     updateKnowledgeData,
     uploadKnowledgeFileData
 } from './data-knowledge';
-
 
 // Objeto de Validacion
 const KnowledgeSchema = z.object({

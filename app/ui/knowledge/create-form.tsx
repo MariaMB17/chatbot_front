@@ -26,7 +26,7 @@ export default function CreateKnowledgeForm() {
                 id="name"
                 name="name"
                 type="string"
-                placeholder="base de conocimiento"
+                placeholder="Base de Conocimiento"
                 aria-describedby="name-error"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               />

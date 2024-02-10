@@ -47,6 +47,20 @@ export default function EditKnowledgeForm({
   const [state, dispatch] = useFormState(updateKnoledgeWithId, initialState);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const handleErrors = (error: string) => {
+    toast.error(error, {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      style: {
+        backgroundColor: '#FECACA',
+        color: '#B91C1C',
+      }
+    });
+    return false;
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files.length > 0 ? event.target.files[0] : null;
     validateFile(file);
@@ -70,12 +84,7 @@ export default function EditKnowledgeForm({
       } else {
         // Clear selected file if it's not PDF or DOCX
         setSelectedFile(null);
-        toast.error('El archivo debe ser de tipo PDF o DOCX', {
-          style: {
-            backgroundColor: '#FECACA',
-            color: '#B91C1C',
-          }
-        });
+        handleErrors('El archivo debe ser de tipo PDF o DOCX');
       }
     }
   };
@@ -105,7 +114,7 @@ export default function EditKnowledgeForm({
                   name="name"
                   type="text"
                   defaultValue={knowledge.name}
-                  placeholder="Descripción"
+                  placeholder="Base de Conocimiento"
                   aria-describedby="name-error"
                   className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 />
@@ -113,18 +122,20 @@ export default function EditKnowledgeForm({
               </div>
 
               <div id="name-error" aria-live="polite" aria-atomic="true">
-                {state.errors?.name &&
-                  state.errors.name.map((error: string) => (
-                    <p className="mt-2 text-sm text-red-500" key={error}>
-                      {error}
-                    </p>
-                  ))}
+                {state.errors?.name && state.errors.name.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {/* {error} */}
+                    {handleErrors(error)}
+                  </p>
+                ))}
               </div>
+
             </div>
             <div aria-live="polite" aria-atomic="true">
-              {state.message ? (
+              {/* {state.message && handleErrors(state.message)} */}
+              {/* {state.message ? (
                 <p className="mt-2 text-sm text-red-500">{state.message}</p>
-              ) : null}
+              ) : null} */}
             </div>
           </div>
 
