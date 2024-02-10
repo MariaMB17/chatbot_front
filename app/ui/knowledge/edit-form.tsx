@@ -96,7 +96,7 @@ export default function EditKnowledgeForm({
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
           <div className="mb-4">
             <label htmlFor="name" className="mb-2 block text-sm font-medium">
-              Nombre de la Base de Conocimiento
+              Nombre:
             </label>
             <div className="relative mt-2 rounded-md">
               <div className="relative">
@@ -131,7 +131,7 @@ export default function EditKnowledgeForm({
           {/* File input field */}
           <div className="mb-4">
             <label htmlFor="file" className="mb-2 block text-sm font-medium">
-              Subir Documento (.pdf o .docx)
+              Subir Documento (.pdf o .docx):
             </label>
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
               onDrop={handleDrop}

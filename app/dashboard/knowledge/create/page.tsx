@@ -11,9 +11,9 @@ export default async function Page() {
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'Knowledge', href: '/dashboard/knowledge' },
+                    { label: 'Base de Conocimiento', href: '/dashboard/knowledge' },
                     {
-                        label: 'Create',
+                        label: 'Agregar',
                         href: '/dashboard/knowledge/create',
                         active: true,
                     },

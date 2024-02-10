@@ -15,9 +15,9 @@ export default async function Page({ params }: { params: { id: number } }) {
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'Knowledge', href: '/dashboard/knowledge' },
+                    { label: 'Base de Conocimiento', href: '/dashboard/knowledge' },
                     {
-                        label: 'Edit',
+                        label: 'Editar',
                         href: `/dashboard/knowledge/${id}/edit`,
                         active: true,
                     },
