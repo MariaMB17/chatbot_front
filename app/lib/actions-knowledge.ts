@@ -7,6 +7,7 @@ import {
     createKnowledgeData,
     deleteKnowledgeBaseData,
     deleteKnowledgeData,
+    fetchKnowledgeUnique,
     updateKnowledgeData,
     uploadKnowledgeFileData
 } from './data-knowledge';
@@ -23,16 +24,16 @@ const CreateKnowledge = KnowledgeSchema;
 const UpdateKnowledge = KnowledgeSchema;
 
 export type State = {
-    errors?: {
-        name?: string[];
-    };
+    errors?: { name?: string[] };
     message?: string | null;
+    success?: boolean | false;
 };
 
 export async function createKnowledge(
     member_id: number,
     prevState: State,
     formData: FormData) {
+
     const validatedFields = CreateKnowledge.safeParse({
         name: formData.get('name'),
     })
@@ -47,17 +48,25 @@ export async function createKnowledge(
 
     // Extrae los campos del Form...
     const { name } = validatedFields.data;
-    try {
-        const result = await createKnowledgeData(member_id, name);
-        console.log('Base de Conocimiento Creada Satisfactoriamente:', result);
-    } catch (error) {
+    const response = await fetchKnowledgeUnique(name);
+    if (response) {
         return {
-            message: 'Error: Creando la Base de Conocimiento',
+            message: 'Nombre se encuentra en Uso',
         }
-    };
+    }
 
-    revalidatePath('/dashboard/knowledge')
-    redirect('/dashboard/knowledge')
+    // Crear registro
+    const result = await createKnowledgeData(member_id, name);
+    if (!result) {
+        return {
+            message: 'Error: Creando el Nombre',
+        }
+    }
+    else {
+        console.log('Conocimiento Creado Satisfactoriamente');
+        revalidatePath('/dashboard/knowledge')
+        redirect(`/dashboard/knowledge/${result.data.id}/edit`);
+    }
 }
 
 export async function updateKnowledge(
@@ -66,6 +75,7 @@ export async function updateKnowledge(
     prevState: State,
     formData: FormData
 ) {
+
     const validatedFields = UpdateKnowledge.safeParse({
         name: formData.get('name'),
     });
@@ -78,56 +88,82 @@ export async function updateKnowledge(
     }
 
     const { name } = validatedFields.data;
+
+    // Busca el nombre para verificar si existe
     try {
-        const result = await updateKnowledgeData(knowledge_id, name)
-        console.log('Base de Conocimiento actualizada Satisfactoriamente:', result);
+        const response = await fetchKnowledgeUnique(name)
+        if (response && response.id !== knowledge_id) {
+            return {
+                message: 'Este nombre se encuentra en uso',
+            }
+        }
+    } catch (error) {
+        return {
+            message: 'Error: Consultando nombre Unico',
+        };
+    }
+
+    // subida de documentos
+    const fileUpload = formData.get('fileUpload');
+    if (fileUpload instanceof File && fileUpload.size > 0) {
+        try {
+            await uploadKnowledgeFileData(member_id, knowledge_id, [fileUpload]);
+            console.log('Documento Subido Satisfactoriamente');
+        } catch (error) {
+            return {
+                message: 'Error: Fallo subir el documento...',
+            };
+        }
+    }
+
+    try {
+        await updateKnowledgeData(knowledge_id, name);
+        console.log('Conocimiento actualizado Satisfactoriamente:');
+        revalidatePath(`/dashboard/knowledge/${knowledge_id}/edit`);
+        return {
+            message: 'Registro Actualizado',
+            success: true
+        }
     } catch (error) {
         return {
             message: 'Error: Fallo la actualización...',
         }
     };
+}
 
-    // Procesamiento de archivos
-    const fileUpload = formData.get('fileUpload');
-    if (fileUpload instanceof File && fileUpload.size > 0) {
-        try {
-            await uploadKnowledgeFileData(member_id, knowledge_id, [fileUpload]);
-            console.log('Archivo Subido');
-        } catch (error) {
-            return {
-                message: 'Error: Fallo subir el archivo...',
-            };
-        }
-    }
+export async function uploadFile(id: number, file: File) {
 
-    revalidatePath('/dashboard/knowledge');
-    redirect('/dashboard/knowledge');
 }
 
 export async function deleteKnowledge(id: number) {
     try {
-        const result = await deleteKnowledgeData(id)
-        console.log('Knowledge delete successfully:', result);
+        await deleteKnowledgeData(id)
+        console.log('Registro Eliminado');
+        revalidatePath('/dashboard/knowledge');
+        return {
+            message: 'Registro Eliminado...',
+            success: true
+        }
     } catch (error) {
         return {
             message: 'Error: Fallo la eliminación del registro...',
         }
     };
-
-    revalidatePath('/dashboard/knowledge');
-    redirect('/dashboard/knowledge');
 }
 
 export async function deleteKnowledgeBase(id: number) {
     try {
-        const result = await deleteKnowledgeBaseData(id)
-        console.log('Documento Eliminado Satisfactoriamente:', result);
+        await deleteKnowledgeBaseData(id)
+        console.log('Documento Eliminado Satisfactoriamente');
+        revalidatePath(`/dashboard/knowledge/${id}/edit`);
+        return {
+            message: 'Registro Eliminado',
+            success: true
+        }
     } catch (error) {
         return {
-            message: 'Error: Eliminado el documento...',
+            message: 'Error: Fallo la eliminación del documento...',
         }
     };
-
-    revalidatePath('/dashboard/knowledge');
-    redirect('/dashboard/knowledge');
 }
+

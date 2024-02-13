@@ -21,18 +21,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/* <header>
-        <script src="./TW-ELEMENTS-PATH/dist/js/tw-elements.umd.min.js"></script>
-      </header> */}
+
       <body className={`${montserrat.className} antialiased`}>
         <StoreProvider>
           <SessionProvider>
             {children}
           </SessionProvider>
         </StoreProvider>
-        {/* <footer className='py-5 flex justify-center items-center'>
-          Derechos Reservados
-        </footer> */}
+
       </body>
     </html>
   );

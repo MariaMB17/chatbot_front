@@ -3,11 +3,10 @@ import { lusitana } from '@/app/ui/fonts';
 import { CreateKnowledge } from '@/app/ui/knowledge/buttons';
 import Pagination from '@/app/ui/knowledge/pagination';
 import Search from '@/app/ui/knowledge/search';
-import Table from '@/app/ui/knowledge/table';
+import KnowledgeTable from '@/app/ui/knowledge/table';
 
-import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
+
 import { Metadata } from 'next';
-import { Suspense } from 'react';
 
 export const metadata: Metadata = {
     title: 'Knowledge',
@@ -37,9 +36,7 @@ export default async function KnowledgePage({
                 <CreateKnowledge />
             </div>
 
-            <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-                <Table query={query} currentPage={currentPage} />
-            </Suspense>
+            <KnowledgeTable query={query} currentPage={currentPage} />
 
             <div className="mt-5 flex w-full justify-center">
                 <Pagination totalPages={totalPages} />

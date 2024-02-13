@@ -23,6 +23,7 @@ const axiosInstance = axios.create({
 
 // Función de manejo de errores
 const handleError = (error: any) => {
+
     if (axios.isAxiosError(error)) {
         console.error('Error en la solicitud:', error.response?.data);
         throw new Error('Mensaje de error para Mostrar');
@@ -30,7 +31,7 @@ const handleError = (error: any) => {
         console.error('Error en la solicitud:', error);
         throw error;
     }
-};
+}
 
 export async function fetchFilteredKnowledge(
     query: string,
@@ -54,17 +55,29 @@ export async function fetchKnowledgePages(query: string): Promise<number> {
     try {
         const response: AxiosResponse = await axiosInstance.get(url);
         const totalPages = Math.ceil(response.data.data / ITEMS_PER_PAGE);
-        return totalPages;
+        return totalPages || 0;
     } catch (error) {
         handleError(error);
-        return 0;
     }
+    return 0;
 }
 
 export async function fetchKnowledgeById(id: number) {
     noStore();
 
     const url = `/knowledge/${id}`;
+    try {
+        const response: AxiosResponse = await axiosInstance.get(url);
+        return response.data.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function fetchKnowledgeUnique(name: string) {
+    noStore();
+
+    const url = `/knowledge/unique/${name}`;
     try {
         const response: AxiosResponse = await axiosInstance.get(url);
         return response.data.data;
@@ -85,6 +98,7 @@ export async function createKnowledgeData(
         },
         member_id
     }
+
     const url = '/knowledge';
     try {
         const response: AxiosResponse = await axiosInstance.post(url, knowledgeData);
@@ -105,6 +119,7 @@ export async function updateKnowledgeData(
             name
         }
     }
+
     const url = `/knowledge/${id}`;
     try {
         const response: AxiosResponse = await axiosInstance.patch(url, knowledgeData);
@@ -141,7 +156,7 @@ export async function deleteKnowledgeBaseData(id: number) {
 export async function uploadKnowledgeFileData(
     member_id: number,
     knowledge_id: number,
-    files: File[]): Promise<any> {
+    files: File[]) {
     noStore();
 
     const formData = new FormData();
@@ -157,7 +172,6 @@ export async function uploadKnowledgeFileData(
         return response.data.data;
     } catch (error) {
         handleError(error);
-        return 'Fallo Subida de Archivos';
     }
 }
 
@@ -166,11 +180,11 @@ export async function getDataTextContex(id: number): Promise<string> {
     try {
         const url = `/knowledge/textcontext/${id}`;
         const response: AxiosResponse = await axiosInstance.get(url)
-        return response.data.data
+        return response.data.data || ''
     } catch (error) {
         handleError(error);
-        return 'Puedes responder cualquier pregunta'
     }
+    return '';
 }
 
 

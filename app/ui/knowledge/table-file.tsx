@@ -51,8 +51,10 @@ export default function KnowledgeFileTable({ knowledges }: { knowledges: Knowled
                 <tbody className="bg-white divide-y divide-gray-200">
                     {knowledgeBaseItems.map((knowledgeBase) => (
                         <tr key={knowledgeBase.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">{knowledgeBase.originalname}</div>
+                            <td className="whitespace-normal py-3 pl-6 pr-3">
+                                <div className="flex items-center gap-3">
+                                    <p className="text-sm md:text-base overflow-y-auto" style={{ maxHeight: '3rem' }}>{knowledgeBase.originalname}</p>
+                                </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-900">{formatDateToLocal(knowledgeBase.createdAt)}</div>

@@ -3,7 +3,7 @@
 import { updateKnowledge } from '@/app/lib/actions-knowledge';
 import { FolderPlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,23 +42,57 @@ export default function EditKnowledgeForm({
   knowledge: KnowledgeProps;
 }) {
   const member_id = 1;
-  const initialState = { message: null, errors: {} };
+  const initialState = { message: null, errors: {}, success: false };
   const updateKnoledgeWithId = updateKnowledge.bind(null, knowledge.id, member_id);
   const [state, dispatch] = useFormState(updateKnoledgeWithId, initialState);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleErrors = (error: string) => {
-    toast.error(error, {
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      style: {
-        backgroundColor: '#FECACA',
-        color: '#B91C1C',
-      }
-    });
-    return false;
+  // Mensajes del Form Action
+  useEffect(() => {
+    if (state.errors?.name) {
+      state.errors?.name && state.errors.name.map((message: string) => {
+        handleErrorsToast(message)
+      })
+    };
+    if (state.message) {
+      handleErrorsToast(state.message, state.success)
+    }
+    if (state.success) {
+      resetFileSelection();
+    }
+  }, [state])
+
+  const handleErrorsToast = (
+    message: string,
+    success: boolean = false) => {
+
+    if (success) {
+      toast.success(message, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        style: {
+          backgroundColor: '#FECACA',
+          color: '#B91C1C',
+        },
+      });
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,25 +100,31 @@ export default function EditKnowledgeForm({
     validateFile(file);
   };
 
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const file = event.dataTransfer.files?.[0];
-    validateFile(file);
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
+    if (file) {
+      const fileInput = document.getElementById('fileUpload') as HTMLInputElement;
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInput.files = dataTransfer.files;
+      validateFile(file);
+    }
   };
 
   const validateFile = (file: File | null) => {
     if (file) {
       const fileType = file.type;
-      if (fileType === 'application/pdf' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      if (fileType === 'application/pdf' ||
+        fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
         setSelectedFile(file);
       } else {
-        // Clear selected file if it's not PDF or DOCX
         setSelectedFile(null);
-        handleErrors('El archivo debe ser de tipo PDF o DOCX');
+        handleErrorsToast('Tipo de Documento: (PDF o DOCX)');
       }
     }
   };
@@ -97,6 +137,12 @@ export default function EditKnowledgeForm({
       const MB = KB / 1024;
       return `${MB.toFixed(2)} MB`;
     }
+  };
+
+  const resetFileSelection = () => {
+    const fileInput = document.getElementById('fileUpload') as HTMLInputElement;
+    fileInput.value = ''; // Reset file input
+    setSelectedFile(null);
   };
 
   return (
@@ -115,38 +161,22 @@ export default function EditKnowledgeForm({
                   type="text"
                   defaultValue={knowledge.name}
                   placeholder="Base de Conocimiento"
-                  aria-describedby="name-error"
                   className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 />
                 <FolderPlusIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
               </div>
-
-              <div id="name-error" aria-live="polite" aria-atomic="true">
-                {state.errors?.name && state.errors.name.map((error: string) => (
-                  <p className="mt-2 text-sm text-red-500" key={error}>
-                    {/* {error} */}
-                    {handleErrors(error)}
-                  </p>
-                ))}
-              </div>
-
-            </div>
-            <div aria-live="polite" aria-atomic="true">
-              {/* {state.message && handleErrors(state.message)} */}
-              {/* {state.message ? (
-                <p className="mt-2 text-sm text-red-500">{state.message}</p>
-              ) : null} */}
             </div>
           </div>
 
           {/* File input field */}
-          <div className="mb-4">
-            <label htmlFor="file" className="mb-2 block text-sm font-medium">
+          <div className="mb-4 overflow-hidden rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+            <label htmlFor="fileUpload" className="mb-2 block text-sm font-medium">
               Subir Documento (.pdf o .docx):
             </label>
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+              onDragOver={handleDragOver}
               onDrop={handleDrop}
-              onDragOver={handleDragOver}>
+            >
               <div className="space-y-1 text-center">
                 <div className="flex text-sm text-gray-600">
                   <label
@@ -172,38 +202,48 @@ export default function EditKnowledgeForm({
 
           {/* File details table */}
           {selectedFile && (
-            <div className="mb-4">
-              <h3 className="text-lg font-medium mb-2">Documento Seleccionado:</h3>
+            <div className="mb-4 overflow-hidden rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+              <h3 className="text-sm font-medium mb-2">Documento Seleccionado:</h3>
               <table className="min-w-full divide-y divide-gray-200">
                 <tbody className="bg-white divide-y divide-gray-200">
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Nombre:
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+
+                    <td className="whitespace-normal py-3 pl-6 pr-3">
+                      <div className="flex items-center gap-3">
+                        <p className="text-sm md:text-base overflow-y-auto" style={{ maxHeight: '3rem' }}>{selectedFile.name}</p>
+                      </div>
+                    </td>
+                    {/* <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                       <div className="max-w-full">
                         {selectedFile.name}
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Documento:
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                       {selectedFile.type === 'application/pdf' ? 'PDF' : 'WORD'}
                     </td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Tamaño:
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                       {renderFileSize(selectedFile.size)}
                     </td>
                   </tr>
                 </tbody>
               </table>
+
+              <Button onClick={resetFileSelection} className="mt-4">
+                Quitar
+              </Button>
             </div>
           )}
         </div>
@@ -211,15 +251,22 @@ export default function EditKnowledgeForm({
         <div className="mt-6 flex justify-end gap-4">
           <Link
             href="/dashboard/knowledge"
-            className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+            className="flex h-10 items-center rounded-lg bg-red-500 px-4 text-sm font-medium text-white transition-colors hover:bg-red-600"
           >
             Cancelar
           </Link>
           <Button type="submit">Guardar</Button>
         </div>
       </form>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />
       <KnowledgeFileTable knowledges={knowledge} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </div>
   );
 }
