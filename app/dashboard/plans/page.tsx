@@ -140,7 +140,7 @@ const App: React.FC = ({
                         <h1 className={`${lusitana.className} text-2xl`}>Plans</h1>
                     </div>
                     <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-                        <InputSearchComponent placeholder="Search plan...." url="plan/filtered-plans?searchString=" onSearch={handleSearch} inputId="inp-search-plan"/>
+                        <InputSearchComponent placeholder="Search plan...." url="plan/filteredplans?searchString=" onSearch={handleSearch} inputId="inp-search-plan"/>
 
                         {/* <Search placeholder="Search Plans..." /> */}
 
