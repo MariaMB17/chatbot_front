@@ -15,7 +15,10 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(auth)
+    if (typeof window !== "undefined") {
+      console.log(auth)
+    }
+    
     //auth && router.push('/dasboard')
   },[]);
   

@@ -56,6 +56,7 @@ const dataUser: UserProfile =
 export const fetchUserData = createAsyncThunk(
     'user/fetchUserData',
     async () => {
+        console.log('userSlice')
         const email = localStorage.getItem('userEmail');
         const response = await axiosAction.get(`users/email/${email}`)
         const { Profile, Member, ...user } = response.data.data ?? null

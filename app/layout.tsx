@@ -1,8 +1,6 @@
 import { Metadata } from 'next';
 import { montserrat } from './ui/fonts';
-
 import '@/app/ui/global.css';
-import SessionProvider from '@/context/SessionAuthProvider';
 import StoreProvider from './StoreProvider';
 
 export const metadata: Metadata = {
@@ -25,14 +23,9 @@ export default function RootLayout({
         <script src="./TW-ELEMENTS-PATH/dist/js/tw-elements.umd.min.js"></script>
       </header> */}
       <body className={`${montserrat.className} antialiased`}>
-        <StoreProvider>
-          <SessionProvider>
-            {children}
-          </SessionProvider>
+      <StoreProvider>
+          {children}
         </StoreProvider>
-        <footer className='py-5 flex justify-center items-center'>
-          Derechos Reservados
-        </footer>
       </body>
     </html>
   );

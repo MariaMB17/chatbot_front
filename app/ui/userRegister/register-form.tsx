@@ -10,12 +10,9 @@ import { UserProfile } from "@/app/lib/model/user-profile-model";
 import { User } from "@/app/lib/model/user-model";
 import { createUserProfile } from "@/app/lib/services/user-profile.service";
 import { ResponseModel } from "@/app/lib/model/reponse-model";
-import { sessionContext } from "@/context/contexts";
 
 
 const RegisterForm = () => {
-    //@ts-ignore
-    const { setSession } = useContext(sessionContext);
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [firstname, setFirstname] = useState<string>("");
@@ -55,7 +52,6 @@ const RegisterForm = () => {
             }
         } else {
             alert(response.message)
-            setSession(response.data);
             console.log(response)
             router.push('/login')
         }

@@ -7,24 +7,21 @@ import {
   KeyIcon,
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { axiosAction } from '../lib/api-service';
 import { ResponseModel } from '../lib/model/reponse-model';
 import { User } from '../lib/model/user-model';
 import { Button } from './button';
-import { sessionContext } from '@/context/contexts';
 import { useAppDispatch, useAppSelector } from '../lib/hooks';
-import { getToken, setToken } from '../lib/features/auth';
-import { setUserProfile } from '../lib/features/user';
+import { /*getToken,*/ setToken } from '../lib/features/authSlice';
+import { setUserProfile } from '../lib/features/userSlice';
 import { UserProfile } from '../lib/model/user-profile-model';
 import { getPlanById } from '../lib/services/plan.service';
 import Link from 'next/link';
 
 export default function LoginForm() {
-  //@ts-ignore
-  const { session, setSession } = useContext(sessionContext);
-  const { dataUser } = useAppSelector((state) => state.user);
+  //const { dataUser } = useAppSelector((state) => state.user);
   const [errors, setErrors] = useState<string[]>([]);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -35,10 +32,11 @@ export default function LoginForm() {
 
 
   useEffect(() => {
-    dispatch(getToken())
-    setEmail(userEmail)
-    setPassword("")
-  }, []);
+    if (typeof window !== "undefined") {
+      setEmail(userEmail)
+      setPassword("")
+    }
+  },[]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -50,7 +48,7 @@ export default function LoginForm() {
       const user: ResponseModel = await axiosAction.post(`auth/signin`, dataUsuario)
       const { data, message, statusCode } = user ?? {}
       if (data.data?.access_token) {
-        dispatch(setToken({ token: data.data?.access_token, email: data.data?.email }))
+        dispatch(setToken({ token: data.data?.access_token, userEmail: data.data?.email}))
         perfilUser(data.data?.id)
         router.push("/dashboard");
         router.refresh();
@@ -74,6 +72,7 @@ export default function LoginForm() {
   }
 
   const perfilUser = async (userId: number) => {
+    console.log(userId)
     try {
       const perfilUser = await axiosAction.get(`users/${userId}`)
       const { Profile, Member, ...user } = perfilUser.data.data ?? null
@@ -87,7 +86,7 @@ export default function LoginForm() {
       }
       dataPlan(Member.planId, dataPerfilUser)
     } catch (error) {
-      setSession({})
+      //setSession({})
     }
   }
 
@@ -156,7 +155,7 @@ export default function LoginForm() {
             </div>
           </div>
         </div>
-        <LoginButton />        
+        <LoginButton />
         <Link
           href="/userRegister"
           className="flex gap-5 items-center self-start rounded-lg px-6 py-3 text-sm font-medium text-blue transition-colors md:text-base"
@@ -173,7 +172,8 @@ export default function LoginForm() {
 function LoginButton() {
   return (
     <Button className="mt-4 w-full" type="submit">
-      Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+      Log in 
+      <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
     </Button>
   );
 }

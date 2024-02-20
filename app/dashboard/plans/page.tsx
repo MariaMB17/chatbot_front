@@ -1,35 +1,50 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { Button, Popconfirm, Skeleton, Space } from 'antd';
-import { ColumnTable } from '@/app/lib/model/column-table-model';
+import { Button, Flex, Skeleton, Space, TableColumnsType, Tooltip } from 'antd';
 import AppTable from '@/app/ui/table-component';
 import { Plan } from '@/app/lib/model/plan-model';
+import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import NumberFormat from '@/app/ui/components/number-format';
+import { getAllPlan } from '@/app/lib/services/plan.service';
+import { lusitana } from '@/app/ui/fonts';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
+import Search from '@/app/ui/search';
+import BtnLinkComponent from '@/app/ui/components/btn-link-component';
+import InputSearchComponent from '@/app/ui/components/input-search-componet';
+import { debounceTime, from, of, switchAll, switchMap } from 'rxjs';
+import { ResponseModel } from '@/app/lib/model/reponse-model';
 
-const App: React.FC = () => {
-    const [loading, setLoading] = useState<boolean>(false);
+const App: React.FC = ({
+    searchParams
+}: {
+    searchParams?: {
+        query?: string
+    }
+}) => {
+    const [loading, setLoading] = useState<boolean>(true);
+    const [plan, setPlan] = useState<Plan[]>([]);
+    const router = useRouter();
 
-    const showSkeleton = () => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 3000);
-    };
+    useEffect(() => {
+        listPlans()
+    }, []);
 
-    const data: Plan[] = [
-        {
-            id: 1,
-            name: 'FREE',
-            description: 'PLAN FREE',
-            cost: 0,
-            credits: 250,
-            bots: 3,
-            documents: 1000,
-            members: 3,
-            member:[]
+    const listPlans = async () => {
+        const data = await getAllPlan()
+        if (data?.msg) {
+
+        } else {
+            setPlan(data.data)
         }
-    ]
+        setLoading(false);
+        return data
+    }
 
-    const column = [
+    const data: Plan[] = plan
+
+    const columns: TableColumnsType<Plan> = [
         {
             title: 'Nombre',
             dataIndex: 'name',
@@ -41,14 +56,64 @@ const App: React.FC = () => {
             key: 'description',
         },
         {
+            title: 'Costo',
+            dataIndex: 'cost',
+            key: 'cost',
+            align: 'right',
+            render: (text) => <NumberFormat number={text} />,
+        },
+        {
+            title: 'Creditos',
+            dataIndex: 'credits',
+            key: 'credits',
+            align: 'right',
+            render: (text) => <NumberFormat number={text} />,
+        },
+        {
+            title: 'Bots',
+            dataIndex: 'bots',
+            key: 'bots',
+            align: 'right',
+            render: (text) => <NumberFormat number={text} />,
+        },
+        {
+            title: 'Documentos',
+            dataIndex: 'documents',
+            key: 'documents',
+            align: 'right',
+            render: (text) => <NumberFormat number={text} />,
+        },
+        {
             title: 'Action',
             dataIndex: '',
             key: 'x',
+            align: 'center',
             render: (record: { key: React.Key }) =>
                 data.length >= 1 ? (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-                        <a>Delete</a>
-                    </Popconfirm>
+                    <Space size="middle">
+                        <Flex wrap="wrap" gap="small">
+                            <Tooltip title="MODIFICAR" >
+                                <Link
+                                    href="/dashboard/plans/create"
+                                    className="flex h-6 items-center rounded-lg bg-green-600 px-2 text-sm font-medium text-white transition-colors hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                                >
+                                    <PencilIcon className="h-4" />
+                                </Link>
+                                {/* <Button
+                                    type="primary"
+                                    onClick={() => handleDelete(record)}
+                                    shape="circle" icon={<EditOutlined />}
+                                    style={{ background: 'blue' }} /> */}
+                            </Tooltip>
+                            <Tooltip title="ELIMINAR" >
+                                <Button
+                                    type="primary"
+                                    onClick={() => handleDelete(record)}
+                                    shape="circle" icon={<DeleteOutlined />}
+                                    style={{ background: 'red' }} />
+                            </Tooltip>
+                        </Flex>
+                    </Space>
                 ) : null,
         },
     ]
@@ -58,25 +123,34 @@ const App: React.FC = () => {
 
     }
 
+    const handleAdd = () => {
+        router.push("/dashboard");
+    }
+
+    const handleSearch = (newItems: any) => {
+        console.log(newItems);
+      };
+
 
     return (
         <Space direction="vertical" style={{ width: '100%' }} size={16}>
             <Skeleton loading={loading}>
-                <p>Planes</p>
-                <div className="relative mx-auto flex w-full max-w-[900px] flex-col space-y-1.5 p-2">
-                    <AppTable columns={column} data={data} />
+                <div className="w-full">
+                    <div className="flex w-full items-center justify-between">
+                        <h1 className={`${lusitana.className} text-2xl`}>Plans</h1>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+                        <InputSearchComponent placeholder="Search plan...." url="plan/filtered-plans?searchString=" onSearch={handleSearch} inputId="inp-search-plan"/>
 
+                        {/* <Search placeholder="Search Plans..." /> */}
+
+                        <BtnLinkComponent href="/dashboard/plans/create" label="Create Plan" />
+                    </div>
+                    <div className="mt-4 flex">
+                        <AppTable columns={columns} data={data} title="LISTADO DE PLANES" />
+                    </div>
                 </div>
-                {/* <h4 style={{ marginBottom: 16 }}>Ant Design, a design language</h4>
-        <p>
-          We supply a series of design principles, practical patterns and high quality design
-          resources (Sketch and Axure), to help people create their product prototypes beautifully
-          and efficiently.
-        </p> */}
             </Skeleton>
-            <Button onClick={showSkeleton} disabled={loading}>
-                Show Skeleton
-            </Button>
         </Space>
     );
 };

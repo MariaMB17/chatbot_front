@@ -1,10 +1,14 @@
 import { Table } from "antd";
-import { ColumnType } from "antd/es/table";
-import { AppTableProps } from "../lib/model/column-table-model";
 
-const AppTable: React.FC<AppTableProps> = ({ columns, data }) => (
-    <Table columns={columns} dataSource={data} />
-  );
-  
+const AppTable: React.FC<any> = ({ columns, data, title }) => (
+  <Table
+    bordered={true}
+    virtual
+    scroll={{ x: 'auto', y: 400 }}
+    columns={columns}
+    dataSource={data}
+    title={() => title}/>
+);
+
 
 export default AppTable;

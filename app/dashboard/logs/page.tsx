@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 const Home = () => {
     const [data, setData] = useState<Array<DataDisplayProps> | null>(null);
 
-    useEffect(() => {
+    /*useEffect(() => {
         const fetchData = async () => {
             try {
                 const result = await fetchTextContext() as Array<DataDisplayProps>;;
@@ -20,7 +20,7 @@ const Home = () => {
         };
 
         fetchData();
-    }, []);
+    }, []);*/
 
     return (
         <div className="container mx-auto p-8">
