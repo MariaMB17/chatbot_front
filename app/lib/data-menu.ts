@@ -40,13 +40,13 @@ export const ItemMenu: Menu[] = [
 
 export const ItemMenuConfig: Menu[] = [
   {
-    name: 'Compañia',
+    name: 'Companies',
     href: '/dashboard/company',
     icon: BuildingOfficeIcon
 
   },
   {
-    name: 'Planes',
+    name: 'Plans',
     href: '/dashboard/plans',
     icon: BuildingOfficeIcon
 
