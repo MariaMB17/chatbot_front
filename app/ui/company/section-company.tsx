@@ -1,14 +1,14 @@
 "use client";
+import { fetchUserData, setUserProfile } from "@/app/lib/features/user";
+import { useAppDispatch, useAppSelector } from "@/app/lib/hooks";
 import { ResponseModel } from "@/app/lib/model/reponse-model";
+import { UserProfile } from "@/app/lib/model/user-profile-model";
+import { getPlanById } from "@/app/lib/services/plan.service";
+import type { TabsProps } from 'antd';
+import { useEffect } from "react";
 import CompanyForm from "./company-form";
 import PlanForm from "./plan-form";
 import AppTabCompany from "./tab-company";
-import type { TabsProps } from 'antd';
-import { useEffect } from "react";
-import { UserProfile } from "@/app/lib/model/user-profile-model";
-import { getPlanById } from "@/app/lib/services/plan.service";
-import { fetchUserData, setUserProfile } from "@/app/lib/features/user";
-import { useAppDispatch, useAppSelector } from "@/app/lib/hooks";
 
 const SectionCompany = () => {
     const dispatch = useAppDispatch();
@@ -17,7 +17,7 @@ const SectionCompany = () => {
     useEffect(() => {
         if (dataUser.user.id === 0) {
             dispatchDataUser();
-        } 
+        }
     }, [dataUser]);
 
     const dispatchDataUser = async () => {
@@ -27,7 +27,6 @@ const SectionCompany = () => {
             dataPlan(dataUP.member?.planId || 0, dataUP)
         }
     }
-
 
     const dataPlan = async (id: number, data?: UserProfile) => {
         const dataPlan: ResponseModel = await getPlanById(id)
@@ -40,7 +39,7 @@ const SectionCompany = () => {
             dispatch(setUserProfile(dataUs))
         } else {
             dispatch(setUserProfile(data))
-        }        
+        }
     }
 
     const items: TabsProps['items'] = [

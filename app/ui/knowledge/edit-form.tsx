@@ -41,6 +41,7 @@ export default function EditKnowledgeForm({
 }: {
   knowledge: KnowledgeProps;
 }) {
+
   const member_id = 1;
   const initialState = { message: null, errors: {}, success: false };
   const updateKnoledgeWithId = updateKnowledge.bind(null, knowledge.id, member_id);
@@ -141,7 +142,7 @@ export default function EditKnowledgeForm({
 
   const resetFileSelection = () => {
     const fileInput = document.getElementById('fileUpload') as HTMLInputElement;
-    fileInput.value = ''; // Reset file input
+    fileInput.value = '';
     setSelectedFile(null);
   };
 
@@ -258,10 +259,11 @@ export default function EditKnowledgeForm({
           <Button type="submit">Guardar</Button>
         </div>
       </form>
+
       <KnowledgeFileTable knowledges={knowledge} />
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={2500}
         hideProgressBar
         closeOnClick
         pauseOnHover

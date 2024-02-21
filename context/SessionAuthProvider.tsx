@@ -1,17 +1,18 @@
 'use client';
-import { FC, useState } from 'react';
-import { sessionContext } from './contexts';
+import { createContext, useContext, useState } from 'react';
 
-interface ContextProps {
-    children: React.ReactNode;
-}
+const SessionContext = createContext<any>(undefined);
 
-const SessionProvider: FC<ContextProps> = ({ children }) => {
-    const [session, setSession] = useState('');
+export function SessionProvider({ children }: { children: React.ReactNode }) {
+    let [session, setSession] = useState();
 
-    return <sessionContext.Provider value={{ session, setSession }} >
+    return <SessionContext.Provider value={{ session, setSession }} >
         {children}
-    </sessionContext.Provider>;
+    </SessionContext.Provider>;
 };
 
-export default SessionProvider;
+export function useSessionContext() {
+    const context = useContext(SessionContext)
+    if (!context) throw new Error('debe usarse dentro de un provider')
+    return context
+};

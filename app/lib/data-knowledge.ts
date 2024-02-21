@@ -55,11 +55,12 @@ export async function fetchKnowledgePages(query: string): Promise<number> {
     try {
         const response: AxiosResponse = await axiosInstance.get(url);
         const totalPages = Math.ceil(response.data.data / ITEMS_PER_PAGE);
-        return totalPages || 0;
+        return totalPages;
     } catch (error) {
         handleError(error);
+        return 0;
     }
-    return 0;
+
 }
 
 export async function fetchKnowledgeById(id: number) {
@@ -186,5 +187,3 @@ export async function getDataTextContex(id: number): Promise<string> {
     }
     return '';
 }
-
-

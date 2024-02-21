@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import { montserrat } from './ui/fonts';
 
 import '@/app/ui/global.css';
-import SessionProvider from '@/context/SessionAuthProvider';
+//import SessionProvider from '@/context/SessionAuthProvider';
+import { SessionProvider } from '@/context/SessionAuthProvider';
 import StoreProvider from './StoreProvider';
 
 export const metadata: Metadata = {

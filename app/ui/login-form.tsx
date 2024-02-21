@@ -1,38 +1,38 @@
 "use client";
 
 import { lusitana } from '@/app/ui/fonts';
+import { useSessionContext } from '@/context/SessionAuthProvider';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   AtSymbolIcon,
-  KeyIcon,
+  KeyIcon
 } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { axiosAction } from '../lib/api-service';
-import { ResponseModel } from '../lib/model/reponse-model';
-import { User } from '../lib/model/user-model';
-import { Button } from './button';
-import { sessionContext } from '@/context/contexts';
-import { useAppDispatch, useAppSelector } from '../lib/hooks';
 import { getToken, setToken } from '../lib/features/auth';
 import { setUserProfile } from '../lib/features/user';
+import { useAppDispatch, useAppSelector } from '../lib/hooks';
+import { ResponseModel } from '../lib/model/reponse-model';
+import { User } from '../lib/model/user-model';
 import { UserProfile } from '../lib/model/user-profile-model';
 import { getPlanById } from '../lib/services/plan.service';
-import Link from 'next/link';
+import { Button } from './button';
 
 export default function LoginForm() {
-  //@ts-ignore
-  const { session, setSession } = useContext(sessionContext);
-  const { dataUser } = useAppSelector((state) => state.user);
+
+  const { session, setSession } = useSessionContext();
+
   const [errors, setErrors] = useState<string[]>([]);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const router = useRouter();
 
   const dispatch = useAppDispatch();
   const { userEmail } = useAppSelector((state) => state.auth);
-
+  const { dataUser } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(getToken())
@@ -42,10 +42,12 @@ export default function LoginForm() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const dataUsuario: User = {
       email,
       password
     }
+
     try {
       const user: ResponseModel = await axiosAction.post(`auth/signin`, dataUsuario)
       const { data, message, statusCode } = user ?? {}
@@ -123,8 +125,8 @@ export default function LoginForm() {
               <input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="email"
-                type="email"
                 name="email"
+                type="email"
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
@@ -144,8 +146,8 @@ export default function LoginForm() {
               <input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="password"
-                type="password"
                 name="password"
+                type="password"
                 placeholder="Enter password"
                 required
                 minLength={6}
@@ -156,7 +158,7 @@ export default function LoginForm() {
             </div>
           </div>
         </div>
-        <LoginButton />        
+        <LoginButton />
         <Link
           href="/userRegister"
           className="flex gap-5 items-center self-start rounded-lg px-6 py-3 text-sm font-medium text-blue transition-colors md:text-base"

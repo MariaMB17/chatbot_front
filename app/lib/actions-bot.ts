@@ -1,10 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { createBotData, fetchBotUnique } from './data-bot';
 import {
-    createKnowledgeData,
     deleteKnowledgeBaseData,
     deleteKnowledgeData,
     fetchKnowledgeUnique,
@@ -13,29 +12,47 @@ import {
 } from './data-knowledge';
 
 // Objeto de Validacion
-const KnowledgeSchema = z.object({
+const BotSchema = z.object({
     name: z.string()
-        .min(5, { message: "Debe tener 5 o más caracteres" })
-        .max(30, { message: "Debe tener máximo 30 caracteres" })
-        .regex(/^[a-zA-Z0-9\s]*$/, { message: 'No se admiten caracteres especiales' }),
+        .min(5, { message: "El nombre debe tener 5 o más caracteres" }),
+    nickname: z.string()
+        .min(5, { message: "El alias debe tener 5 o más caracteres" }),
+    description: z.string()
+        .min(5, { message: "La descripción debe tener 5 o más caracteres" }),
+    modelgpt: z.enum(['free', 'basic', 'premium'], {
+        invalid_type_error: 'Debe especificar un modelo de GPT',
+    }),
+    personality: z.string({ invalid_type_error: 'Debe seleccionar el propósito del bot' }),
+
 });
 
-const CreateKnowledge = KnowledgeSchema;
-const UpdateKnowledge = KnowledgeSchema;
+const CreateBot = BotSchema;
+const UpdateBot = BotSchema;
 
 export type State = {
-    errors?: { name?: string[] };
+    errors?: {
+        name?: string[];
+        nickname?: string[];
+        description?: string[];
+        modelgpt?: string[];
+        personality?: string[];
+    };
     message?: string | null;
     success?: boolean | false;
 };
 
-export async function createKnowledge(
+export async function createBot(
     member_id: number,
     prevState: State,
     formData: FormData) {
 
-    const validatedFields = CreateKnowledge.safeParse({
+    const validatedFields = CreateBot.safeParse({
         name: formData.get('name'),
+        nickname: formData.get('nickname'),
+        description: formData.get('description'),
+        modelgpt: formData.get('modelgpt'),
+        personality: formData.get('personality'),
+
     })
 
     // Valida datos de entrada...
@@ -47,36 +64,48 @@ export async function createKnowledge(
     }
 
     // Extrae los campos del Form...
-    const { name } = validatedFields.data;
-    const response = await fetchKnowledgeUnique(name);
+    const { name, nickname, description, personality, modelgpt } = validatedFields.data;
+    const response = await fetchBotUnique(name);
     if (response) {
         return {
-            message: 'Nombre se encuentra en Uso',
+            message: 'Nombre del bot se encuentra en Uso',
         }
     }
 
+    const botData = {
+        name,
+        nickname,
+        description,
+        personality,
+        modelgpt
+    };
+
     // Crear registro
-    const result = await createKnowledgeData(member_id, name);
+    const knowledgeIds = [1]
+    const result = await createBotData(botData, member_id, knowledgeIds);
     if (!result) {
         return {
-            message: 'Error: Creando el Nombre',
+            message: 'Error: Creando el Bot',
         }
     }
     else {
-        console.log('Conocimiento Creado Satisfactoriamente');
-        revalidatePath('/dashboard/knowledge')
-        redirect(`/dashboard/knowledge/${result.data.id}/edit`);
+        console.log('Bot Creado Satisfactoriamente');
+        revalidatePath('/dashboard/bots')
+        return {
+            message: 'Bot Creado Satisfactoriamente',
+            success: true
+        }
     }
 }
 
-export async function updateKnowledge(
+export async function updateBot(
     knowledge_id: number,
     member_id: number,
     prevState: State,
     formData: FormData
 ) {
 
-    const validatedFields = UpdateKnowledge.safeParse({
+    const validatedFields = UpdateBot.safeParse({
         name: formData.get('name'),
     });
 
@@ -131,7 +160,7 @@ export async function updateKnowledge(
     };
 }
 
-export async function deleteKnowledge(id: number) {
+export async function deleteBot(id: number) {
     try {
         await deleteKnowledgeData(id)
         console.log('Registro Eliminado');
@@ -147,7 +176,7 @@ export async function deleteKnowledge(id: number) {
     };
 }
 
-export async function deleteKnowledgeBase(id: number) {
+export async function deleteBotBase(id: number) {
     try {
         await deleteKnowledgeBaseData(id)
         console.log('Documento Eliminado Satisfactoriamente');

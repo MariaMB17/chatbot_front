@@ -5,13 +5,10 @@ import HeroImag from '@/app/ui/hero-imag';
 import { useAuth } from '@/handlers/useAuth';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
 
 export default function Page() {
   const [auth, setAuth] = useState(useAuth())
-  const router = useRouter();
 
   useEffect(() => {
     console.log(auth)

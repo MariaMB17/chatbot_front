@@ -1,21 +1,19 @@
 "use client";
 
-import { ArrowRightIcon, AtSymbolIcon, CheckBadgeIcon, KeyIcon, PhoneIcon } from "@heroicons/react/24/outline";
-import { lusitana } from "../fonts"
-import { Button } from "../button";
-import { useContext, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Profile } from "@/app/lib/model/profile-model";
-import { UserProfile } from "@/app/lib/model/user-profile-model";
-import { User } from "@/app/lib/model/user-model";
-import { createUserProfile } from "@/app/lib/services/user-profile.service";
 import { ResponseModel } from "@/app/lib/model/reponse-model";
-import { sessionContext } from "@/context/contexts";
-
+import { User } from "@/app/lib/model/user-model";
+import { UserProfile } from "@/app/lib/model/user-profile-model";
+import { createUserProfile } from "@/app/lib/services/user-profile.service";
+import { useSessionContext } from '@/context/SessionAuthProvider';
+import { ArrowRightIcon, AtSymbolIcon, CheckBadgeIcon, KeyIcon, PhoneIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "../button";
+import { lusitana } from "../fonts";
 
 const RegisterForm = () => {
-    //@ts-ignore
-    const { setSession } = useContext(sessionContext);
+    const { session, setSession } = useSessionContext();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [firstname, setFirstname] = useState<string>("");
