@@ -4,7 +4,6 @@ import Pagination from '@/app/ui/bot/pagination';
 import Search from '@/app/ui/bot/search';
 import BotTable from '@/app/ui/bot/table';
 import { lusitana } from '@/app/ui/fonts';
-
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

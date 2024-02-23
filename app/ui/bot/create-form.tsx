@@ -4,11 +4,17 @@ import { createBot } from '@/app/lib/actions-bot';
 import { Button } from '@/app/ui/button';
 import { CheckIcon, CpuChipIcon, CubeTransparentIcon, GlobeAltIcon, MegaphoneIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useFormState } from 'react-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+interface KnowledgeProps {
+  id: number;
+  name: string;
+  createdAt: string,
+  updatedAt: string,
+}
 
 interface personalityBot {
   id: number,
@@ -71,43 +77,37 @@ export default function CreateBotForm() {
   const initialState = { message: null, errors: {}, success: false };
   const createBotWithMemberId = createBot.bind(null, member_id);
   const [state, dispatch] = useFormState(createBotWithMemberId, initialState);
-  const router = useRouter();
 
   // Mensajes del Form Action
   useEffect(() => {
     if (state.message) {
-
       state.errors?.name && state.errors.name.map((error: string) => {
         handleErrorsToast(error)
       });
-
       state.errors?.nickname && state.errors.nickname.map((error: string) => {
         handleErrorsToast(error)
       });
-
       state.errors?.modelgpt && state.errors.modelgpt.map((error: string) => {
         handleErrorsToast(error)
       });
-
       state.errors?.description && state.errors.description.map((error: string) => {
         handleErrorsToast(error)
       });
-
       state.errors?.personality && state.errors.personality.map((error: string) => {
         handleErrorsToast(error)
       });
-
       if (state.message) {
         handleErrorsToast(state.message, state.success)
       }
 
       if (state.success) {
-        const timeout = setTimeout(() => {
-          router.push('/dashboard/bots');
-        }, 3000);
+        const redirectToDashboard = () => {
+          setTimeout(() => {
+
+          }, 2500);
+        };
       }
     };
-
   }, [state])
 
   const handleErrorsToast = (
@@ -117,7 +117,7 @@ export default function CreateBotForm() {
     if (success) {
       toast.success(message, {
         position: "top-right",
-        autoClose: 2500,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -147,7 +147,6 @@ export default function CreateBotForm() {
     <div>
       <form action={dispatch}>
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
-
           {/* name */}
           <div className='flex gap-4'>
             <div className="mb-4 w-1/2">
@@ -189,6 +188,7 @@ export default function CreateBotForm() {
               </div>
             </div>
           </div>
+
           {/* descripcion */}
           <div className="mb-4">
             <label htmlFor="description" className="mb-2 block text-sm font-medium">

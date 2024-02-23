@@ -86,3 +86,15 @@ export async function createBotData(
         handleError(error);
     }
 }
+
+export async function deleteBotData(id: number) {
+    noStore();
+
+    const url = `/bots/${id}`;
+    try {
+        const response: AxiosResponse = await axiosInstance.delete(url);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}

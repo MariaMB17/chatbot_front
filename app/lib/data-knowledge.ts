@@ -4,16 +4,12 @@ import { unstable_noStore as noStore } from 'next/cache';
 const ITEMS_PER_PAGE = 6;
 
 interface CreateKnowledgeProps {
-    knowledge: {
-        name: string;
-    };
+    knowledge: {};
     member_id: number;
 }
 
 interface UpdateKnowledgeProps {
-    knowledge: {
-        name: string;
-    };
+    knowledge: {};
 }
 
 // Configuración de instancia de axios con la URL base
@@ -38,7 +34,6 @@ export async function fetchFilteredKnowledge(
     currentPage: number
 ) {
     noStore();
-
     const url = `/knowledge/filtered/${query}/${currentPage}`;
     try {
         const response: AxiosResponse = await axiosInstance.get(url);
@@ -50,7 +45,6 @@ export async function fetchFilteredKnowledge(
 
 export async function fetchKnowledgePages(query: string): Promise<number> {
     noStore();
-
     const url = `/knowledge/records/${query}`;
     try {
         const response: AxiosResponse = await axiosInstance.get(url);
@@ -60,12 +54,21 @@ export async function fetchKnowledgePages(query: string): Promise<number> {
         handleError(error);
         return 0;
     }
+}
 
+export async function fetchKnowledAll() {
+    noStore();
+    const url = '/knowledge';
+    try {
+        const response: AxiosResponse = await axiosInstance.get(url);
+        return response.data.data;
+    } catch (error) {
+        handleError(error);
+    }
 }
 
 export async function fetchKnowledgeById(id: number) {
     noStore();
-
     const url = `/knowledge/${id}`;
     try {
         const response: AxiosResponse = await axiosInstance.get(url);
@@ -77,7 +80,6 @@ export async function fetchKnowledgeById(id: number) {
 
 export async function fetchKnowledgeUnique(name: string) {
     noStore();
-
     const url = `/knowledge/unique/${name}`;
     try {
         const response: AxiosResponse = await axiosInstance.get(url);
@@ -92,14 +94,12 @@ export async function createKnowledgeData(
     name: string,
 ) {
     noStore();
-
     const knowledgeData: CreateKnowledgeProps = {
         knowledge: {
             name
         },
         member_id
     }
-
     const url = '/knowledge';
     try {
         const response: AxiosResponse = await axiosInstance.post(url, knowledgeData);
@@ -114,7 +114,6 @@ export async function updateKnowledgeData(
     name: string,
 ) {
     noStore();
-
     const knowledgeData: UpdateKnowledgeProps = {
         knowledge: {
             name
@@ -132,7 +131,6 @@ export async function updateKnowledgeData(
 
 export async function deleteKnowledgeData(id: number) {
     noStore();
-
     const url = `/knowledge/${id}`;
     try {
         const response: AxiosResponse = await axiosInstance.delete(url);

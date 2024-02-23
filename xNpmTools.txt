@@ -13,3 +13,8 @@ Limpiar la caché de npm:
     
 // Esto es para la el boton buscar de la paginacion
 npm install use-debounce -Enpm install use-debounce
+
+
+npm i react-tooltip --legacy-peer-deps
+
+npm i framer-motion --legacy-peer-deps

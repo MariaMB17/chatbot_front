@@ -2,10 +2,9 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { createBotData, fetchBotUnique } from './data-bot';
+import { createBotData, deleteBotData, fetchBotUnique } from './data-bot';
 import {
     deleteKnowledgeBaseData,
-    deleteKnowledgeData,
     fetchKnowledgeUnique,
     updateKnowledgeData,
     uploadKnowledgeFileData
@@ -162,7 +161,7 @@ export async function updateBot(
 
 export async function deleteBot(id: number) {
     try {
-        await deleteKnowledgeData(id)
+        await deleteBotData(id)
         console.log('Registro Eliminado');
         revalidatePath('/dashboard/knowledge');
         return {
