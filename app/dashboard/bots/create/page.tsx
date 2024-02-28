@@ -1,3 +1,4 @@
+import { fetchKnowledgeAll } from '@/app/lib/data-knowledge';
 import CreateBotForm from '@/app/ui/bot/create-form';
 import Breadcrumbs from '@/app/ui/knowledge/breadcrumbs';
 
@@ -7,6 +8,13 @@ export const metadata: Metadata = {
     title: 'Create Bot',
 };
 export default async function Page() {
+
+    let [knowledges] = await Promise.all([fetchKnowledgeAll()]);
+
+    if (!knowledges) {
+        knowledges = [{}];
+    }
+
     return (
         <main>
             <Breadcrumbs
@@ -19,7 +27,8 @@ export default async function Page() {
                     },
                 ]}
             />
-            <CreateBotForm />
+            <CreateBotForm knowledges={knowledges} />
         </main>
     );
 }
+

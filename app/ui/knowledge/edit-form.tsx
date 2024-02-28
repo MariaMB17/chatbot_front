@@ -37,10 +37,7 @@ interface KnowledgeProps {
 }
 
 export default function EditKnowledgeForm({
-  knowledge,
-}: {
-  knowledge: KnowledgeProps;
-}) {
+  knowledge }: { knowledge: KnowledgeProps }) {
 
   const member_id = 1;
   const initialState = { message: null, errors: {}, success: false };

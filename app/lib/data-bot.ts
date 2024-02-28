@@ -72,6 +72,8 @@ export async function createBotData(
 ) {
     noStore();
 
+    console.log(knowledgeIds);
+
     const botData: CreateBotProps = {
         bot: getBotData,
         member_id,

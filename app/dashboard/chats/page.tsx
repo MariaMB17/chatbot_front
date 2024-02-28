@@ -1,12 +1,7 @@
-import { getDataTextContex } from "@/app/lib/data-knowledge";
-import ChatNew from "@/app/ui/chats/chat-new";
-
-const Chat = async () => {
-    const textContext = await getDataTextContex(1);
+export default function page() {
     return (
-        <main>
-            <ChatNew textContext={textContext} />
-        </main>
+        <div>
+            <p> Chat Page </p>
+        </div>
     )
 }
-export default Chat

@@ -56,7 +56,7 @@ export async function fetchKnowledgePages(query: string): Promise<number> {
     }
 }
 
-export async function fetchKnowledAll() {
+export async function fetchKnowledgeAll() {
     noStore();
     const url = '/knowledge';
     try {
@@ -172,16 +172,4 @@ export async function uploadKnowledgeFileData(
     } catch (error) {
         handleError(error);
     }
-}
-
-export async function getDataTextContex(id: number): Promise<string> {
-    noStore();
-    try {
-        const url = `/knowledge/textcontext/${id}`;
-        const response: AxiosResponse = await axiosInstance.get(url)
-        return response.data.data || ''
-    } catch (error) {
-        handleError(error);
-    }
-    return '';
 }

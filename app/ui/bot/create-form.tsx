@@ -2,9 +2,11 @@
 
 import { createBot } from '@/app/lib/actions-bot';
 import { Button } from '@/app/ui/button';
-import { CheckIcon, CpuChipIcon, CubeTransparentIcon, GlobeAltIcon, MegaphoneIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon, CpuChipIcon, CubeTransparentIcon, GlobeAltIcon, MegaphoneIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,8 +14,6 @@ import 'react-toastify/dist/ReactToastify.css';
 interface KnowledgeProps {
   id: number;
   name: string;
-  createdAt: string,
-  updatedAt: string,
 }
 
 interface personalityBot {
@@ -71,12 +71,22 @@ const porpuses: personalityBot[] = [
   },
 ]
 
-export default function CreateBotForm() {
+export default function CreateBotForm(
+  { knowledges }: { knowledges: KnowledgeProps[] }) {
 
   const member_id = 1;
   const initialState = { message: null, errors: {}, success: false };
   const createBotWithMemberId = createBot.bind(null, member_id);
   const [state, dispatch] = useFormState(createBotWithMemberId, initialState);
+  const [lists, setLists] = useState
+    <{
+      lista1: KnowledgeProps[];
+      lista2: KnowledgeProps[]
+    }>({
+      lista1: knowledges.length > 0 ? [...knowledges] : [],
+      lista2: [],
+    });
+  const router = useRouter();
 
   // Mensajes del Form Action
   useEffect(() => {
@@ -96,19 +106,20 @@ export default function CreateBotForm() {
       state.errors?.personality && state.errors.personality.map((error: string) => {
         handleErrorsToast(error)
       });
-      if (state.message) {
-        handleErrorsToast(state.message, state.success)
-      }
 
       if (state.success) {
-        const redirectToDashboard = () => {
-          setTimeout(() => {
-
-          }, 2500);
-        };
+        handleErrorsToast(state.message, state.success);
+        redirectToDashboard();
       }
     };
   }, [state])
+
+  const redirectToDashboard = () => {
+    setTimeout(() => {
+      router.push("/dashboard/bots");
+      router.refresh();
+    }, 2000);
+  };
 
   const handleErrorsToast = (
     message: string,
@@ -142,6 +153,59 @@ export default function CreateBotForm() {
       });
     }
   };
+
+  const moveName = (
+    id: number,
+    fromList: KnowledgeProps[],
+    toList: KnowledgeProps[]) => {
+    setLists(prevLists => ({
+      ...prevLists,
+      [fromList === lists.lista1 ? 'lista1' : 'lista2']: prevLists[fromList === lists.lista1 ? 'lista1' : 'lista2'].filter(item => item.id !== id),
+      [toList === lists.lista1 ? 'lista1' : 'lista2']: [...prevLists[toList === lists.lista1 ? 'lista1' : 'lista2'], fromList.find(item => item.id === id)!],
+    }));
+  };
+
+  const moveAllNames = (
+    fromList: KnowledgeProps[],
+    toList: KnowledgeProps[]) => {
+    setLists(prevLists => ({
+      ...prevLists,
+      [fromList === lists.lista1 ? 'lista1' : 'lista2']: [],
+      [toList === lists.lista1 ? 'lista1' : 'lista2']: [...prevLists[toList === lists.lista1 ? 'lista1' : 'lista2'], ...fromList],
+    }));
+  };
+
+  const listVariants = {
+    hidden: {
+      opacity: 0,
+      x: -20,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.3,
+        ease: 'easeInOut',
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: 'easeInOut',
+      },
+    },
+  };
+
+
 
   return (
     <div>
@@ -289,7 +353,6 @@ export default function CreateBotForm() {
                   <option value='' disabled>
                     Seleccione el proposito del bot
                   </option>
-
                   {porpuses.map((porpuse) => (
                     <option key={porpuse.id} value={porpuse.id}>
                       {porpuse.name}
@@ -300,6 +363,75 @@ export default function CreateBotForm() {
               </div>
             </div>
           </div>
+
+          {/* Knowledge */}
+          <div className="flex justify-center mb-4">
+            <div className="w-1/2">
+              <h1 className="text-sm font-medium text-left">Base de Conocimiento:</h1>
+              <motion.div variants={listVariants} initial="hidden" animate="visible">
+                <ul className="border p-4 h-48 overflow-y-auto">
+                  {lists.lista1.map(({ id, name }) => (
+                    <motion.li key={id} variants={itemVariants} className="flex justify-between items-center mb-2 bg-white rounded-md shadow-sm hover:shadow-lg">
+                      <span>{name}</span>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => moveName(id, lists.lista1, lists.lista2)}
+                        className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600"
+                      >
+                        <ChevronRightIcon className="h-5 w-5" />
+                      </motion.button>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+            <div className="w-20 flex flex-col justify-center items-center gap-2">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                onClick={() => moveAllNames(lists.lista1, lists.lista2)}
+                className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600" type="button"
+              >
+                <ChevronDoubleRightIcon className="h-5 w-5" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                onClick={() => moveAllNames(lists.lista2, lists.lista1)}
+                className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600" type="button"
+              >
+                <ChevronDoubleLeftIcon className="h-5 w-5" />
+              </motion.button>
+            </div>
+            <div className="w-1/2">
+              <h1 className="text-sm font-medium text-right">Conocimiento Agregado:</h1>
+              <motion.div variants={listVariants} initial="hidden" animate="visible">
+                <ul
+                  className="border p-4 h-48 overflow-y-auto">
+                  {lists.lista2.map(({ id, name }) => (
+                    <motion.li key={id} variants={itemVariants} className="flex justify-between items-center mb-2 bg-white rounded-md shadow-sm hover:shadow-lg">
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => moveName(id, lists.lista2, lists.lista1)}
+                        className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
+                      >
+                        <ChevronLeftIcon className="h-5 w-5" />
+                      </motion.button>
+                      <span>{name}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Knowledge idsKnowleds Selected*/}
+          <input
+            id="idsKnowledge"
+            name="idsKnowledge"
+            type="text"
+            value={JSON.stringify(`${lists.lista2.length > 0 ? lists.lista2.map(item => item.id) : []}`)}
+            readOnly
+            hidden
+          />
         </div>
 
         <div className="mt-6 flex justify-end gap-4">

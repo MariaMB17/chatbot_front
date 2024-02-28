@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createBotData, deleteBotData, fetchBotUnique } from './data-bot';
 import {
@@ -22,7 +23,7 @@ const BotSchema = z.object({
         invalid_type_error: 'Debe especificar un modelo de GPT',
     }),
     personality: z.string({ invalid_type_error: 'Debe seleccionar el propósito del bot' }),
-
+    idsKnowledge: z.string()
 });
 
 const CreateBot = BotSchema;
@@ -51,7 +52,7 @@ export async function createBot(
         description: formData.get('description'),
         modelgpt: formData.get('modelgpt'),
         personality: formData.get('personality'),
-
+        idsKnowledge: formData.get('idsKnowledge')
     })
 
     // Valida datos de entrada...
@@ -63,12 +64,27 @@ export async function createBot(
     }
 
     // Extrae los campos del Form...
-    const { name, nickname, description, personality, modelgpt } = validatedFields.data;
+    const {
+        name,
+        nickname,
+        description,
+        personality,
+        modelgpt,
+        idsKnowledge
+    } = validatedFields.data;
+
     const response = await fetchBotUnique(name);
     if (response) {
         return {
             message: 'Nombre del bot se encuentra en Uso',
         }
+    }
+
+    let knowledgeids: number[] = [];
+    // Verifica si Seleccionaron algun Coconocimiento(knowledge)
+    const ids = idsKnowledge.replace(/"/g, '');
+    if (ids.trim().length > 0) {
+        knowledgeids = ids.split(',').map(Number);
     }
 
     const botData = {
@@ -80,8 +96,7 @@ export async function createBot(
     };
 
     // Crear registro
-    const knowledgeIds = [1]
-    const result = await createBotData(botData, member_id, knowledgeIds);
+    const result = await createBotData(botData, member_id, knowledgeids);
     if (!result) {
         return {
             message: 'Error: Creando el Bot',
@@ -89,11 +104,12 @@ export async function createBot(
     }
     else {
         console.log('Bot Creado Satisfactoriamente');
-        revalidatePath('/dashboard/bots')
+        revalidatePath('/dashboard/bots');
         return {
             message: 'Bot Creado Satisfactoriamente',
             success: true
         }
+        //redirect('/dashboard/bots');
     }
 }
 
@@ -164,10 +180,12 @@ export async function deleteBot(id: number) {
         await deleteBotData(id)
         console.log('Registro Eliminado');
         revalidatePath('/dashboard/knowledge');
-        return {
-            message: 'Registro Eliminado...',
-            success: true
-        }
+        redirect('/dashboard/bots');
+
+        // return {
+        //     message: 'Registro Eliminado...',
+        //     success: true
+        // }
     } catch (error) {
         return {
             message: 'Error: Fallo la eliminación del registro...',
