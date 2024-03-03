@@ -25,7 +25,6 @@ function  get(url:string):Promise<ResponseModel>{
         method: 'GET',
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
     };
-    console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`)
     return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, requestOptions);
 
 }

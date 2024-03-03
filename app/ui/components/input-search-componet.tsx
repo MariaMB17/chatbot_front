@@ -4,11 +4,16 @@ import { axiosAction } from '@/app/lib/api-service';
 import { ResponseModel } from '@/app/lib/model/reponse-model';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
+interface ResponseSearch {
+  response: ResponseModel, 
+  loading: boolean
+}
+
 interface InputSearchComponentProps {
   placeholder: string;
   url: string;
   inputId: string;
-  onSearch: (data: ResponseModel) => void;
+  onSearch: (data: ResponseSearch) => void;
 
 }
 
@@ -24,7 +29,7 @@ const InputSearchComponent: React.FC<InputSearchComponentProps> = ({ onSearch, p
   const fetchData = async () => {
     try {
       const response = await axiosAction.get(`${url}${debouncedSearchTerm}`);
-      onSearch(response.data);
+      onSearch({response: response.data, loading:false});
     } catch (error) {
       console.error('Error al obtener datos:', error);
     }

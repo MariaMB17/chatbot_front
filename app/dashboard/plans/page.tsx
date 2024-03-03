@@ -3,17 +3,15 @@ import { useEffect, useState } from 'react';
 import { Button, Flex, Skeleton, Space, TableColumnsType, Tooltip } from 'antd';
 import AppTable from '@/app/ui/table-component';
 import { Plan } from '@/app/lib/model/plan-model';
-import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import NumberFormat from '@/app/ui/components/number-format';
 import { getAllPlan } from '@/app/lib/services/plan.service';
 import { lusitana } from '@/app/ui/fonts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
-import Search from '@/app/ui/search';
+import { PencilIcon } from '@heroicons/react/24/outline';
 import BtnLinkComponent from '@/app/ui/components/btn-link-component';
 import InputSearchComponent from '@/app/ui/components/input-search-componet';
-import { debounceTime, from, of, switchAll, switchMap } from 'rxjs';
 import { ResponseModel } from '@/app/lib/model/reponse-model';
 
 const App: React.FC = ({
@@ -23,15 +21,16 @@ const App: React.FC = ({
         query?: string
     }
 }) => {
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [loadingTable, setLoadingTable] = useState<boolean>(false);
     const [plan, setPlan] = useState<Plan[]>([]);
     const router = useRouter();
 
     useEffect(() => {
-        listPlans()
+        setLoadingTable(true)
     }, []);
 
-    const listPlans = async () => {
+    /*const listPlans = async () => {
         const data = await getAllPlan()
         if (data?.msg) {
 
@@ -40,7 +39,7 @@ const App: React.FC = ({
         }
         setLoading(false);
         return data
-    }
+    }*/
 
     const data: Plan[] = plan
 
@@ -95,15 +94,11 @@ const App: React.FC = ({
                             <Tooltip title="MODIFICAR" >
                                 <Link
                                     href="/dashboard/plans/create"
-                                    className="flex h-6 items-center rounded-lg bg-green-600 px-2 text-sm font-medium text-white transition-colors hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                                    style={{ minWidth:'32PX', paddingInlineStart:'0', paddingInlineEnd: '0',  borderRadius: '50%', justifyContent: 'center'}}
+                                    className="flex items-center rounded-lg bg-green-600 px-2 text-sm font-medium text-white transition-colors hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                                 >
                                     <PencilIcon className="h-4" />
                                 </Link>
-                                {/* <Button
-                                    type="primary"
-                                    onClick={() => handleDelete(record)}
-                                    shape="circle" icon={<EditOutlined />}
-                                    style={{ background: 'blue' }} /> */}
                             </Tooltip>
                             <Tooltip title="ELIMINAR" >
                                 <Button
@@ -128,7 +123,13 @@ const App: React.FC = ({
     }
 
     const handleSearch = (newItems: any) => {
-        console.log(newItems);
+        setLoadingTable(true)
+        if(newItems.response?.data) {
+            setPlan(newItems.response?.data)
+            setLoadingTable(newItems?.loading)
+        } else {
+            setLoadingTable(false)
+        }      
       };
 
 
@@ -140,14 +141,16 @@ const App: React.FC = ({
                         <h1 className={`${lusitana.className} text-2xl`}>Plans</h1>
                     </div>
                     <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-                        <InputSearchComponent placeholder="Search plan...." url="plan/filteredplans?searchString=" onSearch={handleSearch} inputId="inp-search-plan"/>
+                        <InputSearchComponent placeholder="Search plan...." url="plan/filtered/searchString?searchString=" onSearch={handleSearch} inputId="inp-search-plan"/>
 
                         {/* <Search placeholder="Search Plans..." /> */}
 
                         <BtnLinkComponent href="/dashboard/plans/create" label="Create Plan" />
                     </div>
                     <div className="mt-4 flex">
+                    <Skeleton loading={loadingTable}>
                         <AppTable columns={columns} data={data} title="LISTADO DE PLANES" />
+                    </Skeleton>
                     </div>
                 </div>
             </Skeleton>
