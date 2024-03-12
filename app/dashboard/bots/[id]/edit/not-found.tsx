@@ -8,7 +8,7 @@ export default function NotFound() {
             <h2 className="text-xl font-semibold">404 Página No Encontrada</h2>
             <p>No se pudo encontrar el bot solicitado.</p>
             <Link
-                href="/dashboard/knowledge"
+                href="/dashboard/bots"
                 className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
             >
                 Regresar

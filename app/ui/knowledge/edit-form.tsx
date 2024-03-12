@@ -40,7 +40,7 @@ export default function EditKnowledgeForm({
   knowledge }: { knowledge: KnowledgeProps }) {
 
   const member_id = 1;
-  const initialState = { message: null, errors: {}, success: false };
+  const initialState = { message: null, errors: {} };
   const updateKnoledgeWithId = updateKnowledge.bind(null, knowledge.id, member_id);
   const [state, dispatch] = useFormState(updateKnoledgeWithId, initialState);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -53,11 +53,11 @@ export default function EditKnowledgeForm({
       })
     };
     if (state.message) {
-      handleErrorsToast(state.message, state.success)
+      handleErrorsToast(state.message)
     }
-    if (state.success) {
-      resetFileSelection();
-    }
+    // if (state.success) {
+    //   resetFileSelection();
+    // }
   }, [state])
 
   const handleErrorsToast = (

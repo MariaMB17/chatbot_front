@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { unstable_noStore as noStore } from 'next/cache';
 
-interface CreateBotProps {
+interface BotProps {
     bot: {};
     knowledgeIds: number[];
     member_id: number;
@@ -41,7 +41,9 @@ export async function fetchBotPages(query: string): Promise<number> {
 }
 
 export async function fetchFilteredBot(
-    query: string, currentPage: number) {
+    query: string,
+    currentPage: number
+) {
     noStore();
 
     const url = `/bots/filtered/${query}/${currentPage}`;
@@ -65,6 +67,17 @@ export async function fetchBotUnique(name: string) {
     }
 }
 
+export async function fetchBotById(id: number) {
+    noStore();
+    const url = `/bots/${id}`;
+    try {
+        const response: AxiosResponse = await axiosInstance.get(url);
+        return response.data.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
 export async function createBotData(
     getBotData: {},
     member_id: number,
@@ -72,9 +85,7 @@ export async function createBotData(
 ) {
     noStore();
 
-    console.log(knowledgeIds);
-
-    const botData: CreateBotProps = {
+    const botData: BotProps = {
         bot: getBotData,
         member_id,
         knowledgeIds
@@ -83,6 +94,28 @@ export async function createBotData(
     const url = '/bots';
     try {
         const response: AxiosResponse = await axiosInstance.post(url, botData);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function updateBotData(
+    id: number,
+    getBotData: {},
+    member_id: number,
+    knowledgeIds: number[],
+) {
+    noStore();
+
+    const botData: BotProps = {
+        bot: getBotData,
+        member_id,
+        knowledgeIds
+    }
+    const url = `/bots/${id}`;
+    try {
+        const response: AxiosResponse = await axiosInstance.patch(url, botData);
         return response.data;
     } catch (error) {
         handleError(error);

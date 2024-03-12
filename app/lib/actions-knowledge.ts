@@ -26,7 +26,6 @@ const UpdateKnowledge = KnowledgeSchema;
 export type State = {
     errors?: { name?: string[] };
     message?: string | null;
-    success?: boolean | false;
 };
 
 export async function createKnowledge(
@@ -107,8 +106,10 @@ export async function updateKnowledge(
     const fileUpload = formData.get('fileUpload');
     if (fileUpload instanceof File && fileUpload.size > 0) {
         try {
-            await uploadKnowledgeFileData(member_id, knowledge_id, [fileUpload]);
-            console.log('Documento Subido Satisfactoriamente');
+            const result = await uploadKnowledgeFileData(member_id, knowledge_id, [fileUpload]);
+            if (result) {
+                console.log('Documento Subido Satisfactoriamente');
+            }
         } catch (error) {
             return {
                 message: 'Error: Fallo subir el documento...',
@@ -117,18 +118,17 @@ export async function updateKnowledge(
     }
 
     try {
-        await updateKnowledgeData(knowledge_id, name);
-        console.log('Conocimiento actualizado Satisfactoriamente:');
-        revalidatePath(`/dashboard/knowledge/${knowledge_id}/edit`);
-        return {
-            message: 'Registro Actualizado',
-            success: true
+        const result = await updateKnowledgeData(knowledge_id, name);
+        if (result) {
+            console.log('Conocimiento actualizado Satisfactoriamente:');
         }
     } catch (error) {
         return {
             message: 'Error: Fallo la actualización...',
         }
     };
+    revalidatePath('/dashboard/knowledge');
+    redirect('/dashboard/knowledge');
 }
 
 export async function deleteKnowledge(id: number) {
@@ -138,7 +138,6 @@ export async function deleteKnowledge(id: number) {
         revalidatePath('/dashboard/knowledge');
         return {
             message: 'Registro Eliminado...',
-            success: true
         }
     } catch (error) {
         return {
@@ -154,7 +153,6 @@ export async function deleteKnowledgeBase(id: number) {
         revalidatePath(`/dashboard/knowledge/${id}/edit`);
         return {
             message: 'Registro Eliminado',
-            success: true
         }
     } catch (error) {
         return {

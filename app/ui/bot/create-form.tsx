@@ -75,7 +75,7 @@ export default function CreateBotForm(
   { knowledges }: { knowledges: KnowledgeProps[] }) {
 
   const member_id = 1;
-  const initialState = { message: null, errors: {}, success: false };
+  const initialState = { message: null, errors: {} };
   const createBotWithMemberId = createBot.bind(null, member_id);
   const [state, dispatch] = useFormState(createBotWithMemberId, initialState);
   const [lists, setLists] = useState
@@ -106,20 +106,16 @@ export default function CreateBotForm(
       state.errors?.personality && state.errors.personality.map((error: string) => {
         handleErrorsToast(error)
       });
-
-      if (state.success) {
-        handleErrorsToast(state.message, state.success);
-        redirectToDashboard();
-      }
+      handleErrorsToast(state.message);
     };
   }, [state])
 
-  const redirectToDashboard = () => {
-    setTimeout(() => {
-      router.push("/dashboard/bots");
-      router.refresh();
-    }, 2000);
-  };
+  // const redirectToDashboard = () => {
+  //   setTimeout(() => {
+  //     router.push("/dashboard/bots");
+  //     router.refresh();
+  //   }, 2000);
+  // };
 
   const handleErrorsToast = (
     message: string,
@@ -205,8 +201,6 @@ export default function CreateBotForm(
     },
   };
 
-
-
   return (
     <div>
       <form action={dispatch}>
@@ -225,7 +219,6 @@ export default function CreateBotForm(
                     type="text"
                     placeholder="nombre..."
                     className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                    autoComplete="on"
                   />
                   <CubeTransparentIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                 </div>

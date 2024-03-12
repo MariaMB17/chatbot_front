@@ -1,4 +1,4 @@
-import { deleteBot, deleteBotBase } from '@/app/lib/actions-bot';
+import { deleteBot } from '@/app/lib/actions-bot';
 import {
   PencilIcon,
   PlusIcon,
@@ -31,19 +31,6 @@ export function UpdateBot({ id }: { id: number }) {
 
 export function DeleteBot({ id }: { id: number }) {
   const deleteBotWithId = deleteBot.bind(null, id);
-
-  return (
-    <form action={deleteBotWithId}>
-      <button className="rounded-md border p-2 hover:bg-gray-100">
-        <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
-      </button>
-    </form>
-  );
-}
-
-export function DeleteBotBase({ id }: { id: number }) {
-  const deleteBotWithId = deleteBotBase.bind(null, id);
 
   return (
     <form action={deleteBotWithId}>

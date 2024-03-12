@@ -3,13 +3,12 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { createBotData, deleteBotData, fetchBotUnique } from './data-bot';
 import {
-    deleteKnowledgeBaseData,
-    fetchKnowledgeUnique,
-    updateKnowledgeData,
-    uploadKnowledgeFileData
-} from './data-knowledge';
+    createBotData,
+    deleteBotData,
+    fetchBotUnique,
+    updateBotData
+} from './data-bot';
 
 // Objeto de Validacion
 const BotSchema = z.object({
@@ -38,7 +37,6 @@ export type State = {
         personality?: string[];
     };
     message?: string | null;
-    success?: boolean | false;
 };
 
 export async function createBot(
@@ -80,8 +78,8 @@ export async function createBot(
         }
     }
 
-    let knowledgeids: number[] = [];
     // Verifica si Seleccionaron algun Coconocimiento(knowledge)
+    let knowledgeids: number[] = [];
     const ids = idsKnowledge.replace(/"/g, '');
     if (ids.trim().length > 0) {
         knowledgeids = ids.split(',').map(Number);
@@ -95,26 +93,24 @@ export async function createBot(
         modelgpt
     };
 
-    // Crear registro
-    const result = await createBotData(botData, member_id, knowledgeids);
-    if (!result) {
-        return {
-            message: 'Error: Creando el Bot',
+    try {
+        const result = await createBotData(botData, member_id, knowledgeids);
+        if (result) {
+            console.log('Bot Creado Satisfactoriamente');
         }
-    }
-    else {
-        console.log('Bot Creado Satisfactoriamente');
-        revalidatePath('/dashboard/bots');
-        return {
-            message: 'Bot Creado Satisfactoriamente',
-            success: true
+    } catch (error) {
+        let errorMsg = 'Algo salio mal'
+        if (error instanceof Error) {
+            errorMsg = `Error: ${error.message}`
         }
-        //redirect('/dashboard/bots');
+        return { message: errorMsg }
     }
+    revalidatePath('/dashboard/bots');
+    redirect('/dashboard/bots');
 }
 
 export async function updateBot(
-    knowledge_id: number,
+    bot_id: number,
     member_id: number,
     prevState: State,
     formData: FormData
@@ -122,6 +118,11 @@ export async function updateBot(
 
     const validatedFields = UpdateBot.safeParse({
         name: formData.get('name'),
+        nickname: formData.get('nickname'),
+        description: formData.get('description'),
+        modelgpt: formData.get('modelgpt'),
+        personality: formData.get('personality'),
+        idsKnowledge: formData.get('idsKnowledge')
     });
 
     if (!validatedFields.success) {
@@ -131,12 +132,19 @@ export async function updateBot(
         };
     }
 
-    const { name } = validatedFields.data;
+    const {
+        name,
+        nickname,
+        description,
+        personality,
+        modelgpt,
+        idsKnowledge
+    } = validatedFields.data;
 
     // Busca el nombre para verificar si existe
     try {
-        const response = await fetchKnowledgeUnique(name)
-        if (response && response.id !== knowledge_id) {
+        const response = await fetchBotUnique(name)
+        if (response && response.id !== bot_id) {
             return {
                 message: 'Este nombre se encuentra en uso',
             }
@@ -147,65 +155,52 @@ export async function updateBot(
         };
     }
 
-    // subida de documentos
-    const fileUpload = formData.get('fileUpload');
-    if (fileUpload instanceof File && fileUpload.size > 0) {
-        try {
-            await uploadKnowledgeFileData(member_id, knowledge_id, [fileUpload]);
-            console.log('Documento Subido Satisfactoriamente');
-        } catch (error) {
-            return {
-                message: 'Error: Fallo subir el documento...',
-            };
-        }
+    // Verifica si Seleccionaron algun Coconocimiento(knowledge)
+    let knowledgeids: number[] = [];
+    const ids = idsKnowledge.replace(/"/g, '');
+    if (ids.trim().length > 0) {
+        knowledgeids = ids.split(',').map(Number);
     }
 
-    try {
-        await updateKnowledgeData(knowledge_id, name);
-        console.log('Conocimiento actualizado Satisfactoriamente:');
-        revalidatePath(`/dashboard/knowledge/${knowledge_id}/edit`);
-        return {
-            message: 'Registro Actualizado',
-            success: true
-        }
-    } catch (error) {
-        return {
-            message: 'Error: Fallo la actualización...',
-        }
+    const botData = {
+        name,
+        nickname,
+        description,
+        personality,
+        modelgpt
     };
+
+    try {
+        const result = await updateBotData(bot_id, botData, member_id, knowledgeids);
+        if (result) {
+            console.log('Bot actualizado Satisfactoriamente:', result.data);
+        }
+
+    } catch (error) {
+        let errorMsg = 'Algo salio mal'
+        if (error instanceof Error) {
+            errorMsg = `Error: ${error.message}`
+        }
+        return { message: errorMsg }
+    }
+
+    revalidatePath('/dashboard/bots');
+    redirect('/dashboard/bots');
 }
 
 export async function deleteBot(id: number) {
     try {
-        await deleteBotData(id)
-        console.log('Registro Eliminado');
-        revalidatePath('/dashboard/knowledge');
-        redirect('/dashboard/bots');
-
-        // return {
-        //     message: 'Registro Eliminado...',
-        //     success: true
-        // }
-    } catch (error) {
-        return {
-            message: 'Error: Fallo la eliminación del registro...',
-        }
-    };
-}
-
-export async function deleteBotBase(id: number) {
-    try {
-        await deleteKnowledgeBaseData(id)
-        console.log('Documento Eliminado Satisfactoriamente');
-        revalidatePath(`/dashboard/knowledge/${id}/edit`);
-        return {
-            message: 'Registro Eliminado',
-            success: true
+        const result = await deleteBotData(id)
+        if (result) {
+            console.log('Registro Eliminado');
         }
     } catch (error) {
-        return {
-            message: 'Error: Fallo la eliminación del documento...',
+        let errorMsg = 'Algo salio mal'
+        if (error instanceof Error) {
+            errorMsg = `Error: ${error.message}`
         }
-    };
+        return { message: errorMsg }
+    }
+    revalidatePath('/dashboard/bots');
+    redirect('/dashboard/bots');
 }
-
