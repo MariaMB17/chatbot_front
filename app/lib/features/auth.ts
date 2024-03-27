@@ -6,7 +6,7 @@ const initialState = {
     userEmail: '',
 };
 
-const authSlice = createSlice({
+export const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {

@@ -1,7 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { UserProfile } from '@/app/lib/model/user-profile-model';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosAction } from "../api-service";
-import { UserProfile } from '@/app/lib/model/user-profile-model'
 
 const dataUser: UserProfile =
 {
@@ -36,7 +35,7 @@ const dataUser: UserProfile =
         memberOnKnowledge: [],
         memberOnBot: [],
         memberLog: [],
-        chat:[],
+        chat: [],
         role: ''
     },
     plan: {
@@ -75,7 +74,7 @@ const userSlice = createSlice({
     initialState: {
         dataUser,
         status: 'idle',
-        error: null
+        error: null,
     },
     reducers: {
         setUserProfile: (state, action) => {
@@ -89,7 +88,7 @@ const userSlice = createSlice({
                 ...state,
                 dataUser: state.dataUser,
             };
-        }
+        },
     },
     extraReducers: (builder) => {
         builder

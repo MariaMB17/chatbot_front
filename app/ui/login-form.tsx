@@ -3,10 +3,7 @@
 import { lusitana } from '@/app/ui/fonts';
 import { useSessionContext } from '@/context/SessionAuthProvider';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import {
-  AtSymbolIcon,
-  KeyIcon
-} from '@heroicons/react/24/outline';
+import { AtSymbolIcon, KeyIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -52,7 +49,10 @@ export default function LoginForm() {
       const user: ResponseModel = await axiosAction.post(`auth/signin`, dataUsuario)
       const { data, message, statusCode } = user ?? {}
       if (data.data?.access_token) {
-        dispatch(setToken({ token: data.data?.access_token, email: data.data?.email }))
+        dispatch(setToken({
+          token: data.data?.access_token,
+          email: data.data?.email
+        }))
         perfilUser(data.data?.id)
         router.push("/dashboard");
         router.refresh();

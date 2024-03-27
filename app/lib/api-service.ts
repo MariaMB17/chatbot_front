@@ -1,5 +1,4 @@
 import axios from 'axios';
-import getConfig from 'next/config';
 import { getCookie } from "cookies-next";
 import { ResponseModel } from './model/reponse-model';
 
@@ -10,7 +9,7 @@ export const axiosAction = {
     /*delete: _delete*/
 };
 
-const authHeader = (url:string) => {
+const authHeader = (url: string) => {
     const token = getCookie('token') ?? null;
     const isApiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     if (token) {
@@ -20,17 +19,16 @@ const authHeader = (url:string) => {
     }
 }
 
-function  get(url:string):Promise<ResponseModel>{
+function get(url: string): Promise<ResponseModel> {
     const requestOptions = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
     };
-    console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`)
     return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, requestOptions);
 
 }
 
-function post(url:string, body: any):Promise<ResponseModel>{
+function post(url: string, body: any): Promise<ResponseModel> {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
@@ -41,12 +39,12 @@ function post(url:string, body: any):Promise<ResponseModel>{
 
 function patch(url: string, id: string, body: any): Promise<ResponseModel> {
     const requestOptions = {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', ...authHeader(url) },
-      data: JSON.stringify(body)
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...authHeader(url) },
+        data: JSON.stringify(body)
     };
     return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}/${id}`, requestOptions);
-  }
+}
 
 const handleResponse = (response: any) => {
     console.log(response)
