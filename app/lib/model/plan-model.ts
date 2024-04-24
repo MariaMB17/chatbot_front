@@ -11,5 +11,5 @@ export interface Plan {
     documents: number,
     members: number,
     invoice?: Invoice,
-    member: Member[]
+    member?: Member[]
 }

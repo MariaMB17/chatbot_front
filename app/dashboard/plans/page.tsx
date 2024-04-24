@@ -5,7 +5,7 @@ import AppTable from '@/app/ui/table-component';
 import { Plan } from '@/app/lib/model/plan-model';
 import { DeleteOutlined } from '@ant-design/icons';
 import NumberFormat from '@/app/ui/components/number-format';
-import { getAllPlan } from '@/app/lib/services/plan.service';
+import { deletePlan, getAllPlan } from '@/app/lib/services/plan.service';
 import { lusitana } from '@/app/ui/fonts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -30,16 +30,20 @@ const App: React.FC = ({
         setLoadingTable(true)
     }, []);
 
-    /*const listPlans = async () => {
+    const listPlans = async () => {
         const data = await getAllPlan()
         if (data?.msg) {
 
         } else {
             setPlan(data.data)
         }
-        setLoading(false);
+        setLoadingTable(false);
         return data
-    }*/
+    }
+
+    const handleModify = (record: any) => {
+        return `/dashboard/plans/${record.id}/edit`;
+    }
 
     const data: Plan[] = plan
 
@@ -93,7 +97,8 @@ const App: React.FC = ({
                         <Flex wrap="wrap" gap="small">
                             <Tooltip title="MODIFICAR" >
                                 <Link
-                                    href="/dashboard/plans/create"
+                                    onClick={() => setLoadingTable(true)}
+                                    href={handleModify(record)}
                                     style={{ minWidth:'32PX', paddingInlineStart:'0', paddingInlineEnd: '0',  borderRadius: '50%', justifyContent: 'center'}}
                                     className="flex items-center rounded-lg bg-green-600 px-2 text-sm font-medium text-white transition-colors hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                                 >
@@ -114,14 +119,26 @@ const App: React.FC = ({
     ]
 
     const handleDelete = (key: any) => {
-        console.log('pasooooooo', key)
-
+        deleteItem(key.id)
     }
 
-    const handleAdd = () => {
-        router.push("/dashboard");
-    }
+    const deleteItem = async (id: number) => {
+        setLoadingTable(true)
+        const res = await deletePlan(id)
+        if(res?.data?.error) {            
+            alert(res?.data.error.meta.cause)
+            //setLoadingTable(false)
+        } else if(res.data?.msg) {
+            alert(res.data?.msg)
+            //setLoadingTable(false)
+        } else {
+            const m = 'Successfully Deleted Plan' 
+            alert(m)            
+        }
+        listPlans()
+        
 
+    }
     const handleSearch = (newItems: any) => {
         setLoadingTable(true)
         if(newItems.response?.data) {

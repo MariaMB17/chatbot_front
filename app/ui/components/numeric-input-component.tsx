@@ -17,7 +17,7 @@ interface resultInput {
 }
 
 const NumericInput: React.FC<NumericInputProps> = ({
-  initialValue = '',
+  initialValue,
   onBlur,
   onChange,
   placeholder,

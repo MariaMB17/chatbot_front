@@ -31,6 +31,24 @@ export const createPlan = async (data: Plan) => {
     }
 }
 
+export const updatePlan = async (id: number, body:any) => {
+    try {
+        const plan: ResponseModel = await axiosAction.patch(`${URL_API}`, id, body)
+        return response(plan)
+    } catch (error) {
+        return error;
+    }
+}
+
+export const deletePlan = async (id: number) => {
+    try {
+        const plan: ResponseModel = await axiosAction.deleteItem(`${URL_API}`, id)
+        return response(plan)
+    } catch (error) {
+        return error;
+    }
+}
+
 const response = (dataResponse: ResponseModel) => {
     const { data, message, statusCode } = dataResponse ?? {}
     return data

@@ -1,4 +1,5 @@
 "use client";
+import { Plan } from "@/app/lib/model/plan-model";
 import Breadcrumbs from "@/app/ui/components/breadcrumb-component";
 import { lusitana } from "@/app/ui/fonts";
 import CreateForm from "@/app/ui/plans/create-form";
@@ -8,6 +9,17 @@ import { useState } from "react";
 
 const Page: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
+    const dataPlan: Plan = {
+        id: 0,
+        name:'',
+        description:'',
+        cost:0,
+        credits:0,
+        bots: 0,
+        documents: 0,
+        members: 0,
+        member: []
+    }
     
     return (
         <Space direction="vertical" style={{ width: '100%' }} size={16}>
@@ -20,7 +32,7 @@ const Page: React.FC = () => {
                             CREAR PLAN
                         </h1>                        
                     </div>
-                    <CreateForm />
+                    <CreateForm valuePlan={dataPlan}/>
                 </div>
             </Skeleton>
         </Space>

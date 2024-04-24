@@ -7,7 +7,7 @@ export const axiosAction = {
     get,
     post,
     patch,
-    /*delete: _delete*/
+    deleteItem
 };
 
 const authHeader = (url:string) => {
@@ -38,7 +38,7 @@ function post(url:string, body: any):Promise<ResponseModel>{
     return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, requestOptions);
 }
 
-function patch(url: string, id: string, body: any): Promise<ResponseModel> {
+function patch(url: string, id: number, body: any): Promise<ResponseModel> {
     const requestOptions = {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', ...authHeader(url) },
@@ -46,6 +46,14 @@ function patch(url: string, id: string, body: any): Promise<ResponseModel> {
     };
     return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}/${id}`, requestOptions);
   }
+
+function deleteItem(url: string, id: number): Promise<ResponseModel> {
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', ...authHeader(url) },
+    };
+    return axios(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}/${id}`, requestOptions);
+}
 
 const handleResponse = (response: any) => {
     console.log(response)

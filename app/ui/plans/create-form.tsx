@@ -4,7 +4,7 @@ import { ChangeEvent, useState } from "react";
 import CustomBtnToolTip from "../components/btn-tooltip-component";
 import { CloseCircleOutlined, PoweroffOutlined } from "@ant-design/icons";
 import NumericInput from "../components/numeric-input-component";
-import { createPlan } from "@/app/lib/services/plan.service";
+import { createPlan, updatePlan } from "@/app/lib/services/plan.service";
 
 interface errorsInterface {
     name: string,
@@ -16,21 +16,37 @@ interface errorsInterface {
     members: string,
 }
 
-const CreateForm = () => {
+const CreateForm = ({
+    valuePlan
+}: {
+    valuePlan: Plan
+}) => {
     const [btnAaddLoading, setBtnAaddLoading] = useState<boolean>(false);
     const [btnCancelLoading, setBtnCancelLoading] = useState<boolean>(false);
 
+    /*const dataPlan: Plan = {
+        id: (valuePlan) ? valuePlan.id : 0,
+        name: (valuePlan) ? valuePlan.name : '',
+        description: (valuePlan) ? valuePlan.description : '',
+        cost: (valuePlan) ? valuePlan.cost : 0,
+        credits: (valuePlan) ? valuePlan.cost : 0,
+        bots: (valuePlan) ? valuePlan.cost : 0,
+        documents: (valuePlan) ? valuePlan.cost : 0,
+        members: (valuePlan) ? valuePlan.cost : 0,
+        member: (valuePlan) ? valuePlan.member : []
+    }*/
+
     const dataPlan: Plan = {
-        id: 0,
-        name: '',
-        description: '',
-        cost: 0,
-        credits: 0,
-        bots: 0,
-        documents: 0,
-        members: 0,
-        member: []
-    }
+        id: (valuePlan) ? valuePlan.id : 0,
+        name: (valuePlan) ? valuePlan.name : '',
+        description: (valuePlan) ? valuePlan.description : '',
+        cost: (valuePlan) ? valuePlan.cost : 0,
+        credits: (valuePlan) ? +valuePlan.credits : 0,
+        bots: (valuePlan) ? +valuePlan.bots : 0,
+        documents: (valuePlan) ? +valuePlan.documents : 0,
+        members: (valuePlan) ? +valuePlan.members : 0,
+        member: (valuePlan) ? valuePlan.member : []
+    }    
 
     const dataErros = {
         name: '',
@@ -52,16 +68,24 @@ const CreateForm = () => {
         return setPlan({ ...plan, [property]: d ? event.target.value : +event.target.value })
     }
 
+    const dataNumber = (value: any) => {
+        return value;
+    }
+
     const handleAddClick = async () => {
         setBtnAaddLoading(true)
         const e = checkValidation()
-        if(!e) {
-            const result = await createPlan(plan)
-            if(result.data?.msg) {
+        if (!e) {
+            const { id, member, ...dataSave } = plan
+            //@ts-ignore
+            const result = (id === 0) ? await createPlan(dataSave) : await updatePlan(id, {id,...dataSave})
+            if (result.data?.msg) {
                 alert(result.data?.msg)
             } else {
-                alert('Successfully Created Pla')
+                const m = (id !== 0) ? 'Successfully Modify Plan' : 'Successfully Created Plan' 
+                alert(m)
             }
+
         }
         setBtnAaddLoading(false)
     }
@@ -133,7 +157,7 @@ const CreateForm = () => {
         checkValidation()
     };
 
-     const checkValidation = () => {
+    const checkValidation = () => {
         const e = validateForm()
         setErrors(e)
         const properties = Object.entries(e)
@@ -186,7 +210,7 @@ const CreateForm = () => {
                             </label>
                             <div className="relative">
                                 <NumericInput
-                                    initialValue="0,00"
+                                    initialValue={dataNumber(plan.cost)}
                                     id="cost"
                                     name="cost"
                                     onBlur={handleBlur}
@@ -208,7 +232,7 @@ const CreateForm = () => {
                             </label>
                             <div className="relative">
                                 <NumericInput
-                                    initialValue="0,00"
+                                    initialValue={dataNumber(plan.credits)}
                                     id="credits"
                                     name="credits"
                                     onBlur={handleBlur}
@@ -232,7 +256,7 @@ const CreateForm = () => {
                             </label>
                             <div className="relative">
                                 <NumericInput
-                                    initialValue="0,00"
+                                    initialValue={dataNumber(plan.bots)}
                                     id="bots"
                                     name="bots"
                                     onBlur={handleBlur}
@@ -254,7 +278,7 @@ const CreateForm = () => {
                             </label>
                             <div className="relative">
                                 <NumericInput
-                                    initialValue="0,00"
+                                    initialValue={dataNumber(plan.documents)}
                                     id="documents"
                                     name="documents"
                                     onBlur={handleBlur}
@@ -276,7 +300,7 @@ const CreateForm = () => {
                             </label>
                             <div className="relative">
                                 <NumericInput
-                                    initialValue="0,00"
+                                    initialValue={dataNumber(plan.members)}
                                     id="members"
                                     name="members"
                                     onBlur={handleBlur}
